@@ -1,0 +1,10 @@
+
+services:
+  fireflow:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/usr/src/app
