@@ -1,13 +1,21 @@
 # FireFlow
 
 
-You need a .env file that is not provided. Use the .env.example to get the keys and set your values as you need.
+Description of the project
 
-Things to install : (TODO)
-- Python 
-- docker and docker compose
-- chmod +x ./entrypoint.sh
+## Environnement requirements
+You need a .env file that is not provided. Use the .env.example to get the keys and set your values as you need
 
-## How to run in production
+- Python 3.13.X
+- Docker and Docker compose
+- `chmod +x ./entrypoint.sh`
 
-`docker compose up --build`
+## Local use
+ - Create the migrations
+    - `alembic revision -m "revision message"`
+ - Run the last migration 
+    - `alembic upgrade head`
+
+## Production use
+
+Run `docker compose up --build`
