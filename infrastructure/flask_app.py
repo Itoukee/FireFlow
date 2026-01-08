@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restx import Api
-from app.firewall.firewall_routes import api as firewall_ns
+from api.firewall.firewall_routes import api as firewall_ns
 
 
 def create_app():

@@ -22,5 +22,4 @@ class FirewallCreate(BaseModel):
 
 class GetFirewalls(BaseModel):
     page: Optional[int] = 0
-    count: int
     limit: int

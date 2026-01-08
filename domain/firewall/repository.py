@@ -18,14 +18,15 @@ class FirewallRepository(ABC):
         pass
 
     @abstractmethod
-    def get_all(self) -> list[Firewall]:
+    def paginate(self, page: int, limit: int) -> tuple[list[Firewall], int]:
+        pass
+
+    @abstractmethod
+    def get_by_id(self, firewall_id: int) -> Optional[Firewall]:
         pass
 
 
 """ TODO 
-    @abstractmethod
-    def get_by_id(self, firewall_id: int) -> Optional[Firewall]:
-        pass
 
 
     @abstractmethod

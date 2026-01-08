@@ -18,3 +18,11 @@ firewall_create_model = api.model(
         ),
     },
 )
+
+firewall_paginate = api.model(
+    "FirewallPaginate",
+    {
+        "page": fields.Integer(required=True, description="The current page"),
+        "limit": fields.Integer(required=True, description="The current page"),
+    },
+)

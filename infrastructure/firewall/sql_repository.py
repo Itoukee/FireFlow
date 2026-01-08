@@ -2,7 +2,7 @@ from domain.firewall.entity import Firewall
 from domain.firewall.repository import FirewallRepository
 from infrastructure.firewall.sql_model import FirewallModel
 
-from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from infrastructure.databases.sql import get_database_session
 
@@ -24,8 +24,40 @@ class FirewallSQLRepository(FirewallRepository):
         self.session.add(row)
         self.session.commit()
 
+        # Assign the properties that were missing before the commit()
         firewall.id = row.id
-        firewall.created_at = row.created_at
-        firewall.updated_at = row.updated_at
+        firewall.created_at = row.created_at.date()
+        firewall.updated_at = row.updated_at.date()
 
         return firewall
+
+    def paginate(self, page: int, limit: int) -> tuple[list[Firewall], int]:
+        """
+        Returns a list of firewalls with the total count of records
+        Uses pagination for optimisation
+
+        Args:
+            page (int)
+            limit (int)
+
+        Returns:
+            tuple[list[Firewall], int]
+        """
+        query = self.session.query(FirewallModel)
+        total_records = query.count()
+
+        # Starts at page 0
+        items = query.offset(page * limit).limit(limit).all()
+
+        firewall_items = [
+            Firewall(
+                id=item.id,
+                name=item.name,
+                description=item.description,
+                created_at=item.created_at.date(),
+                updated_at=item.updated_at.date(),
+            )
+            for item in items
+        ]
+
+        return firewall_items, total_records
