@@ -29,12 +29,6 @@ class FirewallRepository(ABC):
     def update(self, firewall_id: int, upd: FirewallUpdate) -> Firewall:
         pass
 
-
-""" TODO 
-
-
-
     @abstractmethod
-    def delete(self, firewall_id: int) -> None:
-        pass 
-"""
+    def delete(self, firewall_id: int) -> bool:
+        pass

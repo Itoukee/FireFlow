@@ -100,7 +100,7 @@ class FirewallSQLRepository(FirewallRepository):
         """
         row = self.session.query(FirewallModel).filter_by(id=firewall_id).first()
         if not row:
-            raise ValueError(f"The firewall id={firewall_id} to upd was not found")
+            raise ValueError(f"The firewall id={firewall_id} to update was not found")
 
         if upd.name:
             row.name = upd.name
@@ -112,3 +112,24 @@ class FirewallSQLRepository(FirewallRepository):
         self.session.refresh(row)
 
         return self.__to_entity(row)
+
+    def delete(self, firewall_id: int) -> bool:
+        """Delete a firewall in cascade wih its children relations
+
+        Args:
+            firewall_id (int): unique id
+
+        Raises:
+            ValueError: If not found
+
+        Returns:
+            bool: True | error raised
+        """
+        row = self.session.query(FirewallModel).filter_by(id=firewall_id).first()
+        if not row:
+            raise ValueError(f"The firewall id={firewall_id} to delete was not found")
+
+        self.session.delete(row)
+        self.session.commit()
+
+        return True

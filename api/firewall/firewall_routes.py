@@ -19,6 +19,10 @@ class Firewall(Resource):
 
     @api.doc("Get one by id", params={"firewall_id": "Unique identifier"})
     def get(self, firewall_id: int):
+        """Get one Controller
+        Args:
+            firewall_id (int): Params
+        """
         firewall = firewall_repo.get_by_id(firewall_id)
 
         if not firewall:
@@ -36,6 +40,12 @@ class Firewall(Resource):
     )
     @api.expect(firewall_update_model)
     def patch(self, firewall_id: int):
+        """Patch controller
+        Args:
+            firewall_id (int): Params
+        """
+        if not isinstance(firewall_id, int):
+            api.abort(400, "The id must be an integer")
         if not api.payload or not isinstance(api.payload, dict):
             api.abort(400, "JSON body required")
 
@@ -46,10 +56,22 @@ class Firewall(Resource):
 
         try:
             firewall = firewall_repo.update(firewall_id, firewall_update)
-        except ValueError as e:
-            print(e)
+        except ValueError:
             return api.abort(404, f"Firewall id={firewall_id} not found")
         return {"success": True, "data": {"firewall": firewall.to_dict()}}
+
+    def delete(self, firewall_id: int):
+        """Delete controler
+        Args:
+            firewall_id (int): Params
+        """
+        if not isinstance(firewall_id, int):
+            api.abort(400, "The id must be an integer")
+        try:
+            firewall_repo.delete(firewall_id)
+        except ValueError:
+            api.abort(404, "The firewall to delete was not found")
+        return "", 204
 
 
 @api.route("/")
@@ -75,6 +97,9 @@ class Firewalls(Resource):
     @api.doc("Create")
     @api.expect(firewall_create_model)
     def post(self):
+        """Creates a firewall
+        Args : Body {name:str,description:Optional[str]}
+        """
         if not api.payload or not isinstance(api.payload, dict):
             api.abort(400, "JSON body required")
 
