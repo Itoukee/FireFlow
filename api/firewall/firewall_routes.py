@@ -10,6 +10,21 @@ from infrastructure.firewall.sql_repository import FirewallSQLRepository
 firewall_repo = FirewallSQLRepository()
 
 
+@api.route("/<int:firewall_id>")
+class Firewall(Resource):
+
+    @api.doc(
+        "Get one by id", params={"firewall_id": "Unique identifier of the item (int)"}
+    )
+    def get(self, firewall_id: int):
+        firewall = firewall_repo.get_by_id(firewall_id)
+
+        if not firewall:
+            api.abort(404, f"Firewall with id={firewall_id} has not been found")
+        else:
+            return {"success": True, "data": {"firewall": firewall.to_dict()}}
+
+
 @api.route("/")
 class Firewalls(Resource):
     @api.doc(

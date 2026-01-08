@@ -2,8 +2,6 @@ from domain.firewall.entity import Firewall
 from domain.firewall.repository import FirewallRepository
 from infrastructure.firewall.sql_model import FirewallModel
 
-from sqlalchemy import func
-
 from infrastructure.databases.sql import get_database_session
 
 
@@ -34,7 +32,7 @@ class FirewallSQLRepository(FirewallRepository):
     def paginate(self, page: int, limit: int) -> tuple[list[Firewall], int]:
         """
         Returns a list of firewalls with the total count of records
-        Uses pagination for optimisation
+        Uses pagination for optimization
 
         Args:
             page (int)
@@ -61,3 +59,18 @@ class FirewallSQLRepository(FirewallRepository):
         ]
 
         return firewall_items, total_records
+
+    def get_by_id(self, firewall_id: int) -> Firewall | None:
+        """Gets a firewall by id
+
+        Args:
+            firewall_id (int)
+
+        Returns:
+            Firewall | None
+        """
+        row = self.session.query(FirewallModel).filter_by(id=firewall_id).first()
+
+        if row:
+            return Firewall(id=row.id, name=row.name, description=row.description)
+        return None

@@ -11,6 +11,9 @@ You need a .env file that is not provided. Use the .env.example to get the keys 
 - `chmod +x ./entrypoint.sh`
 
 ## Local use
+ - Install the requirements
+   - Either with `pip install -r requirements.txt` OR
+   `./requirements-install.sh` 
  - Create the migrations
     - `alembic revision -m "revision message"`
  - Run the last migration 
@@ -19,3 +22,7 @@ You need a .env file that is not provided. Use the .env.example to get the keys 
 ## Production use
 
 Run `docker compose up --build`
+
+## Testing
+
+The library pytest is used to cover business logic, and mocked use-cases
