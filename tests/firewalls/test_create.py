@@ -8,6 +8,7 @@ from domain.firewall.ports import FirewallCreate
 
 
 def test_create_firewall(mocker):
+    """Testing the creation of a firewall"""
     repo = mocker.Mock(spec=FirewallRepository)
 
     repo.create.return_value = Firewall(
