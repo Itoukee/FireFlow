@@ -1,6 +1,3 @@
-import pytest
-from datetime import datetime
-
 from domain.firewall.entity import Firewall
 from domain.firewall.repository import FirewallRepository
 from domain.firewall.use_cases import GetFirewallByIdUC

@@ -1,4 +1,3 @@
-import pytest
 from datetime import datetime
 
 from domain.firewall.entity import Firewall
