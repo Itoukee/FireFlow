@@ -20,6 +20,8 @@ def test_id_found(mocker):
     assert firewall
     assert firewall.id == 0
 
+    repo.get_by_id.assert_called_once()
+
 
 def test_id_not_found(mocker):
     """Testing a get by id where none is found"""
@@ -30,3 +32,5 @@ def test_id_not_found(mocker):
     firewall = use_case.execute(0)
 
     assert not firewall
+
+    repo.get_by_id.assert_called_once()

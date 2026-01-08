@@ -7,8 +7,8 @@ class FirewallUpdate(BaseModel):
     Update model made to avoid making updates on unwanted properties
     """
 
-    name: Optional[str]
-    description: Optional[str]
+    name: Optional[str] = None
+    description: Optional[str] = None
 
 
 class FirewallCreate(BaseModel):

@@ -19,6 +19,20 @@ firewall_create_model = api.model(
     },
 )
 
+# Firewall udpate model
+firewall_update_model = api.model(
+    "FirewallUpdate",
+    {
+        "name": fields.String(
+            required=False, description="The firewall name", min_length=3
+        ),
+        "description": fields.String(
+            required=False, description="The firewall description"
+        ),
+    },
+)
+
+# Firewal pagination model
 firewall_paginate = api.model(
     "FirewallPaginate",
     {

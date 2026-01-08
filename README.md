@@ -26,3 +26,5 @@ Run `docker compose up --build`
 ## Testing
 
 The library pytest is used to cover business logic, and mocked use-cases
+
+How to run : `python -m pytest`

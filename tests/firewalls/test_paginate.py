@@ -18,6 +18,8 @@ def test_paginate_empty(mocker):
     assert firewalls == []
     assert total_records == 0
 
+    repo.paginate.assert_called_once()
+
 
 def test_paginate(mocker):
     """
@@ -51,3 +53,5 @@ def test_paginate(mocker):
     assert items[-1].id == 19
 
     assert total_records == 50
+
+    assert repo.paginate.call_count == 2

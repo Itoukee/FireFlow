@@ -1,5 +1,5 @@
 from typing import Literal, Optional
-from datetime import date
+from datetime import date, datetime
 
 from pydantic import BaseModel
 
@@ -10,8 +10,8 @@ class Policy(BaseModel):
     name: str
     default_action: Literal["deny", "access"]
     priority: int
-    created_at: date
-    updated_at: date
+    created_at: datetime
+    updated_at: datetime
 
     def to_dict(self):
         """
@@ -24,6 +24,6 @@ class Policy(BaseModel):
             "name": self.name,
             "default_action": self.default_action,
             "priority": self.priority,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            "created_at": str(self.created_at),
+            "updated_at": str(self.updated_at),
         }

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
 
@@ -7,8 +7,8 @@ class Firewall(BaseModel):
     id: Optional[int] = None
     name: str
     description: Optional[str]
-    created_at: Optional[date] = None
-    updated_at: Optional[date] = None
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def to_dict(self):
         """
