@@ -25,4 +25,7 @@ class FirewallSQLRepository(FirewallRepository):
         self.session.commit()
 
         firewall.id = row.id
+        firewall.created_at = row.created_at
+        firewall.updated_at = row.updated_at
+
         return firewall

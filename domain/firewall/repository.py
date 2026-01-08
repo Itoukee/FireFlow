@@ -18,12 +18,15 @@ class FirewallRepository(ABC):
         pass
 
     @abstractmethod
+    def get_all(self) -> list[Firewall]:
+        pass
+
+
+""" TODO 
+    @abstractmethod
     def get_by_id(self, firewall_id: int) -> Optional[Firewall]:
         pass
 
-    @abstractmethod
-    def get_all(self) -> list[Firewall]:
-        pass
 
     @abstractmethod
     def update(self, firewall_id: int, upd: FirewallUpdate) -> Firewall:
@@ -31,4 +34,4 @@ class FirewallRepository(ABC):
 
     @abstractmethod
     def delete(self, firewall_id: int) -> None:
-        pass
+        pass """

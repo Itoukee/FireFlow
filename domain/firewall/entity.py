@@ -6,9 +6,9 @@ from typing import Optional
 class Firewall(BaseModel):
     id: Optional[int] = None
     name: str
-    description: str
-    created_at: date
-    updated_at: date
+    description: Optional[str]
+    created_at: Optional[date] = None
+    updated_at: Optional[date] = None
 
     def to_dict(self):
         """
@@ -19,6 +19,6 @@ class Firewall(BaseModel):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            "created_at": str(self.created_at),
+            "updated_at": str(self.updated_at),
         }

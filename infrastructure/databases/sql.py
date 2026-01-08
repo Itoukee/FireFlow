@@ -12,9 +12,9 @@ def get_database_session() -> Session:
     engine: Engine | None = None
     match settings.db_type:
         case "sqlite":
-            engine = create_engine(f"sqlite:///{settings.db_name}")
+            engine = create_engine(f"sqlite:///{settings.db_name}.sqlite")
         case _:
-            engine = create_engine(f"sqlite:///{settings.db_name}")
+            engine = create_engine(f"sqlite:///{settings.db_name}.sqlite")
     session = Session(engine)
     return session
 
