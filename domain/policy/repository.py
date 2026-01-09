@@ -31,10 +31,6 @@ class PolicyRepository(ABC):
     def update(self, policy_id: int, firewall_id: int, upd: PolicyPatch) -> Policy:
         pass
 
-
-"""TODO implement the other CRUD operations    
-
     @abstractmethod
-    def delete(self, firewall_id: int) -> bool:
+    def delete(self, firewall_id: int, policy_id: int) -> bool:
         pass
- """

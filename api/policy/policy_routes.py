@@ -9,6 +9,7 @@ from domain.policy.use_cases import (
     PaginatePoliciesByFirewallUC,
     GetPolicyByIdUC,
     PatchPolicyUC,
+    DeletePolicyByIdUC,
 )
 from infrastructure.policy.sql_repository import PolicySQLRepository
 
@@ -63,6 +64,19 @@ class Policy(Resource):
         except ValueError:
             return api.abort(404, f"Policy id={policy_id} not found")
         return {"success": True, "data": {"policy": policy.to_dict()}}
+
+    def delete(self, firewall_id: int, policy_id: int):
+        """Delete one
+        Args:
+            firewall_id (int): Params
+        """
+        if not isinstance(firewall_id, int) or not isinstance(policy_id, int):
+            api.abort(400, "The firewall_id and policy_id must be an integer")
+        try:
+            DeletePolicyByIdUC(policy_repo).execute(firewall_id, policy_id)
+        except ValueError as value_err:
+            api.abort(404, str(value_err))
+        return "", 204
 
 
 @api.route("/")

@@ -131,3 +131,31 @@ class PolicySQLRepository(PolicyRepository):
         self.session.refresh(row)
 
         return self.__to_entity(row)
+
+    def delete(self, firewall_id: int, policy_id: int) -> bool:
+        """Delete a policy
+
+        Args:
+            firewall_id (int): unique id
+            policy_id (int): unique id
+
+        Raises:
+            ValueError: If not found
+
+        Returns:
+            bool: True | error raised
+        """
+        row = (
+            self.session.query(PolicyModel)
+            .filter_by(id=policy_id, firewall_id=firewall_id)
+            .first()
+        )
+        if not row:
+            raise ValueError(
+                f"The policy id={policy_id} and firewall id={firewall_id} to delete was not found"
+            )
+
+        self.session.delete(row)
+        self.session.commit()
+
+        return True
