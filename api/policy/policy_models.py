@@ -1,6 +1,6 @@
 from flask_restx import Namespace, fields
 
-from domain.policy.entity import DefaultAction
+from domain.enums import DefaultAction
 
 
 api = Namespace(

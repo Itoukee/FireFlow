@@ -1,13 +1,8 @@
 from typing import Optional
 from datetime import datetime
-
 from pydantic import BaseModel
-from enum import Enum
 
-
-class DefaultAction(str, Enum):
-    ALLOW = "ALLOW"
-    DENY = "DENY"
+from domain.enums import DefaultAction
 
 
 class Policy(BaseModel):

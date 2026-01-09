@@ -11,9 +11,11 @@ from domain.policy.use_cases import (
     PatchPolicyUC,
     DeletePolicyByIdUC,
 )
+from infrastructure.firewall.sql_repository import FirewallSQLRepository
 from infrastructure.policy.sql_repository import PolicySQLRepository
 
 policy_repo = PolicySQLRepository()
+firewall_repo = FirewallSQLRepository()
 
 
 @api.route("/<int:policy_id>")
@@ -73,7 +75,9 @@ class Policy(Resource):
         if not isinstance(firewall_id, int) or not isinstance(policy_id, int):
             api.abort(400, "The firewall_id and policy_id must be an integer")
         try:
-            DeletePolicyByIdUC(policy_repo).execute(firewall_id, policy_id)
+            DeletePolicyByIdUC(policy_repo, firewall_repo).execute(
+                firewall_id, policy_id
+            )
         except ValueError as value_err:
             api.abort(404, str(value_err))
         return "", 204
@@ -117,7 +121,9 @@ class Policies(Resource):
             return api.abort(400, ve.errors())
 
         try:
-            policy = CreatePolicyUC(policy_repo).execute(firewall_id, policy_create)
+            policy = CreatePolicyUC(policy_repo, firewall_repo).execute(
+                firewall_id, policy_create
+            )
 
         except ValueError:
             return api.abort(

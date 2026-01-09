@@ -1,6 +1,8 @@
-from datetime import date
-from typing import Literal, Optional
+from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel
+
+from domain.enums import Protocol, DefaultAction
 
 
 class Rule(BaseModel):
@@ -9,13 +11,13 @@ class Rule(BaseModel):
     name: str
     source_ip: int
     destination_ip: int
-    protocol: Literal["tcp", "udp", "any"]
+    protocol: Protocol
     port: int
-    action: Literal["allow", "deny"]
+    action: DefaultAction
     enabled: bool
     order: int
-    created_at: date
-    updated_at: date
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def to_dict(self):
         """
@@ -33,6 +35,6 @@ class Rule(BaseModel):
             "action": self.action,
             "enabled": self.enabled,
             "order": self.order,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
+            "created_at": str(self.created_at),
+            "updated_at": str(self.updated_at),
         }

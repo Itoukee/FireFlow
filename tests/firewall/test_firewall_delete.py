@@ -1,6 +1,6 @@
+from domain.enums import DefaultAction
 from domain.firewall.repository import FirewallRepository
 from domain.firewall.use_cases import DeleteFirewallUC
-from domain.policy.entity import DefaultAction
 from infrastructure.firewall.sql_model import FirewallModel
 from infrastructure.policy.sql_model import PolicyModel
 

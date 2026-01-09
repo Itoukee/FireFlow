@@ -25,6 +25,12 @@ class FirewallSQLRepository(FirewallRepository):
             updated_at=item.updated_at,
         )
 
+    def __patch_item(self, row: FirewallModel, upd: FirewallPatch):
+        """Helper to update the attributes"""
+        for key, value in upd.model_dump(exclude_unset=True).items():
+            setattr(row, key, value)
+        return row
+
     def create(self, firewall: Firewall) -> Firewall:
         """Creates a new firewall
 
@@ -110,10 +116,7 @@ class FirewallSQLRepository(FirewallRepository):
         if not row:
             raise ValueError(f"The firewall id={firewall_id} to update was not found")
 
-        if upd.name:
-            row.name = upd.name
-        if upd.description:
-            row.description = upd.description
+        row = self.__patch_item(row, upd)
 
         self.session.commit()
         self.session.refresh(row)

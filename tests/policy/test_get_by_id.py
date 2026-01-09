@@ -1,6 +1,5 @@
-import pytest
-
-from domain.policy.entity import DefaultAction, Policy
+from domain.enums import DefaultAction
+from domain.policy.entity import Policy
 from domain.policy.repository import PolicyRepository
 from domain.policy.use_cases import GetPolicyByIdUC
 
