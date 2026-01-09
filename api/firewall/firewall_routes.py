@@ -5,10 +5,16 @@ from pydantic import ValidationError
 from api.firewall.firewall_models import (
     api,
     firewall_create_model,
-    firewall_update_model,
+    firewall_patch_model,
 )
-from domain.firewall.use_cases import CreateFirewallUC, PaginateFirewallsUC
-from domain.firewall.ports import FirewallCreate, FirewallUpdate
+from domain.firewall.use_cases import (
+    CreateFirewallUC,
+    PaginateFirewallsUC,
+    PatchFirewallUC,
+    GetFirewallByIdUC,
+    DeleteFirewallUC,
+)
+from domain.firewall.ports import FirewallCreate, FirewallPatch
 from infrastructure.firewall.sql_repository import FirewallSQLRepository
 
 firewall_repo = FirewallSQLRepository()
@@ -19,11 +25,11 @@ class Firewall(Resource):
 
     @api.doc("Get one by id", params={"firewall_id": "Unique identifier"})
     def get(self, firewall_id: int):
-        """Get one Controller
+        """Get one
         Args:
             firewall_id (int): Params
         """
-        firewall = firewall_repo.get_by_id(firewall_id)
+        firewall = GetFirewallByIdUC(firewall_repo).execute(firewall_id)
 
         if not firewall:
             api.abort(404, f"Firewall with id={firewall_id} has not been found")
@@ -38,9 +44,10 @@ class Firewall(Resource):
             "description": "optional",
         },
     )
-    @api.expect(firewall_update_model)
+    @api.doc("Patch a given firewall by id")
+    @api.expect(firewall_patch_model)
     def patch(self, firewall_id: int):
-        """Patch controller
+        """Patch one
         Args:
             firewall_id (int): Params
         """
@@ -50,25 +57,28 @@ class Firewall(Resource):
             api.abort(400, "JSON body required")
 
         try:
-            firewall_update = FirewallUpdate(**api.payload)
+            firewall_update = FirewallPatch(**api.payload)
         except ValidationError as ve:
             return api.abort(400, ve.errors())
 
         try:
-            firewall = firewall_repo.update(firewall_id, firewall_update)
+            firewall = PatchFirewallUC(firewall_repo).execute(
+                firewall_id, firewall_update
+            )
         except ValueError:
             return api.abort(404, f"Firewall id={firewall_id} not found")
         return {"success": True, "data": {"firewall": firewall.to_dict()}}
 
+    @api.doc("Delete a firewall by id")
     def delete(self, firewall_id: int):
-        """Delete controler
+        """Delete one
         Args:
             firewall_id (int): Params
         """
         if not isinstance(firewall_id, int):
             api.abort(400, "The id must be an integer")
         try:
-            firewall_repo.delete(firewall_id)
+            DeleteFirewallUC(firewall_repo).execute(firewall_id)
         except ValueError:
             api.abort(404, "The firewall to delete was not found")
         return "", 204
@@ -81,6 +91,7 @@ class Firewalls(Resource):
         params={"page": "target page", "limit": "maximum elements per page"},
     )
     def get(self):
+        """Paginate the firewalls"""
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
 
@@ -108,8 +119,9 @@ class Firewalls(Resource):
         except ValidationError as ve:
             return api.abort(400, ve.errors())
 
-        firewall_dict = (
-            CreateFirewallUC(firewall_repo).execute(firewall_create).to_dict()
-        )
+        try:
+            firewall = CreateFirewallUC(firewall_repo).execute(firewall_create)
+        except ValueError:
+            return api.abort(400, "A firewall with this name already exists")
 
-        return {"success": True, "data": {"firewall": firewall_dict}}, 201
+        return {"success": True, "data": {"firewall": firewall.to_dict()}}, 201

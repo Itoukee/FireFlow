@@ -3,8 +3,6 @@ from flask_restx import Namespace, fields
 
 api = Namespace("firewalls", description="Firewalls operations")
 
-# Flask API Models here, for ensuring the input
-
 
 # Firewall creation input
 firewall_create_model = api.model(
@@ -19,9 +17,9 @@ firewall_create_model = api.model(
     },
 )
 
-# Firewall udpate model
-firewall_update_model = api.model(
-    "FirewallUpdate",
+# Firewall patch model
+firewall_patch_model = api.model(
+    "FirewallPatch",
     {
         "name": fields.String(
             required=False, description="The firewall name", min_length=3
@@ -32,7 +30,7 @@ firewall_update_model = api.model(
     },
 )
 
-# Firewal pagination model
+# Firewall pagination model
 firewall_paginate = api.model(
     "FirewallPaginate",
     {

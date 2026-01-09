@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from domain.firewall.entity import Firewall
-from domain.firewall.ports import FirewallUpdate
+from domain.firewall.ports import FirewallPatch
 
 
 class FirewallRepository(ABC):
@@ -26,7 +26,7 @@ class FirewallRepository(ABC):
         pass
 
     @abstractmethod
-    def update(self, firewall_id: int, upd: FirewallUpdate) -> Firewall:
+    def patch(self, firewall_id: int, upd: FirewallPatch) -> Firewall:
         pass
 
     @abstractmethod
