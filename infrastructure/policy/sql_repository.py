@@ -1,3 +1,4 @@
+from domain.exceptions import NotFoundError
 from domain.policy.entity import Policy
 from domain.policy.ports import PolicyPatch
 from domain.policy.repository import PolicyRepository
@@ -100,14 +101,14 @@ class PolicySQLRepository(PolicyRepository):
             upd (PolicyPatch): potential attributes to update
 
         Raises:
-            ValueError: If not found
+            NotFoundError: If not found
 
         Returns:
             Policy: the patched row
         """
         row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
         if not row:
-            raise ValueError(f"The policy id={policy_id} to update was not found")
+            raise NotFoundError(f"The policy id={policy_id} to update was not found")
 
         row = self.__patch_item(row, upd)
 
@@ -123,14 +124,14 @@ class PolicySQLRepository(PolicyRepository):
             policy_id (int): unique id
 
         Raises:
-            ValueError: If not found
+            NotFoundError: If not found
 
         Returns:
             bool: True | error raised
         """
         row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
         if not row:
-            raise ValueError(f"The policy id={policy_id} to delete was not found")
+            raise NotFoundError(f"The policy id={policy_id} to delete was not found")
 
         self.session.delete(row)
         self.session.commit()

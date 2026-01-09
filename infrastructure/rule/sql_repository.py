@@ -1,3 +1,4 @@
+from domain.exceptions import NotFoundError
 from domain.rule.entity import Rule
 from domain.rule.ports import PatchRule
 from domain.rule.repository import RuleRepository
@@ -27,6 +28,7 @@ class RuleSQLRepository(RuleRepository):
         )
 
     def __patch_item(self, row: RuleModel, upd: PatchRule):
+        """Helper to set the attributes to update"""
         for key, value in upd.model_dump(exclude_unset=True).items():
             setattr(row, key, value)
         return row
@@ -109,14 +111,14 @@ class RuleSQLRepository(RuleRepository):
             upd (PolicyPatch): potential attributes to update
 
         Raises:
-            ValueError: If not found
+            NotFoundError: If not found
 
         Returns:
             Rule: the patched row
         """
         row = self.session.query(RuleModel).filter_by(id=rule_id).first()
         if not row:
-            raise ValueError(f"The rule id={rule_id} to update was not found")
+            raise NotFoundError(f"The rule id={rule_id} to update was not found")
 
         row = self.__patch_item(row, upd)
 
@@ -132,14 +134,14 @@ class RuleSQLRepository(RuleRepository):
             rule_id (int): unique id
 
         Raises:
-            ValueError: If not found
+            NotFoundError: If not found
 
         Returns:
             bool: True | error raised
         """
         row = self.session.query(RuleModel).filter_by(id=rule_id).first()
         if not row:
-            raise ValueError(f"The rule id={rule_id} to delete was not found")
+            raise NotFoundError(f"The rule id={rule_id} to delete was not found")
 
         self.session.delete(row)
         self.session.commit()

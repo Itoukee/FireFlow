@@ -14,6 +14,10 @@ class FirewallRepository(ABC):
         pass
 
     @abstractmethod
+    def name_exists(self, name: str) -> bool:
+        pass
+
+    @abstractmethod
     def create(self, firewall: Firewall) -> Firewall:
         pass
 

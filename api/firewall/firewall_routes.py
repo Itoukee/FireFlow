@@ -7,6 +7,7 @@ from api.firewall.firewall_models import (
     firewall_create_model,
     firewall_patch_model,
 )
+from domain.exceptions import NotFoundError
 from domain.firewall.use_cases import (
     CreateFirewallUC,
     PaginateFirewallsUC,
@@ -65,8 +66,8 @@ class Firewall(Resource):
             firewall = PatchFirewallUC(firewall_repo).execute(
                 firewall_id, firewall_update
             )
-        except ValueError:
-            return api.abort(404, f"Firewall id={firewall_id} not found")
+        except NotFoundError as ne:
+            return api.abort(404, ne)
         return {"success": True, "data": {"firewall": firewall.to_dict()}}
 
     @api.doc("Delete a firewall by id")
@@ -79,8 +80,8 @@ class Firewall(Resource):
             api.abort(400, "The id must be an integer")
         try:
             DeleteFirewallUC(firewall_repo).execute(firewall_id)
-        except ValueError:
-            api.abort(404, "The firewall to delete was not found")
+        except NotFoundError as ne:
+            api.abort(404, ne)
         return "", 204
 
 
@@ -121,7 +122,7 @@ class Firewalls(Resource):
 
         try:
             firewall = CreateFirewallUC(firewall_repo).execute(firewall_create)
-        except ValueError:
-            return api.abort(400, "A firewall with this name already exists")
+        except ValueError as ve:
+            return api.abort(400, str(ve))
 
         return {"success": True, "data": {"firewall": firewall.to_dict()}}, 201

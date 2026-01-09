@@ -1,3 +1,4 @@
+from domain.exceptions import NotFoundError
 from domain.firewall.repository import FirewallRepository
 from domain.policy.repository import PolicyRepository
 
@@ -16,15 +17,16 @@ class DeletePolicyByIdUC:
             policy_id (int)
 
         Raises:
-            ValueError
+            NotFoundError
+
 
         Returns:
-            _type_: Policy | None
+            _type_: True | None
         """
         firewall = self.firewall_repo.get_by_id(firewall_id)
         if not firewall:
-            raise ValueError(f"The firewall id={firewall_id} doesn't exist")
+            raise NotFoundError(f"The firewall id={firewall_id} doesn't exist")
 
-        policy = self.repo.delete(policy_id)
+        succeed = self.repo.delete(policy_id)
 
-        return policy
+        return succeed

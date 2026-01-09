@@ -1,4 +1,5 @@
 from domain.enums import DefaultAction
+from domain.exceptions import NotFoundError
 from domain.firewall.repository import FirewallRepository
 from domain.policy.entity import Policy
 from domain.policy.ports import PolicyCreate
@@ -25,7 +26,7 @@ class CreatePolicyUC:
 
         firewall = self.firewall_repo.get_by_id(firewall_id)
         if not firewall:
-            raise ValueError(f"The firewall id={firewall_id} doesn't exist")
+            raise NotFoundError(f"The firewall id={firewall_id} doesn't exist")
 
         policy = Policy(
             firewall_id=firewall_id,

@@ -8,6 +8,10 @@ class CreateFirewallUC:
         self.repo = repo
 
     def execute(self, create_firewall: FirewallCreate):
+        exists = self.repo.name_exists(create_firewall.name)
+        if exists:
+            raise ValueError("Firewall with this name already exists")
+
         firewall = Firewall(
             name=create_firewall.name, description=create_firewall.description
         )

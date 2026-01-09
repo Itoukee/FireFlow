@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from domain.exceptions import NotFoundError
 from domain.firewall.entity import Firewall
 from domain.firewall.ports import FirewallPatch
 from domain.firewall.repository import FirewallRepository
@@ -31,6 +32,15 @@ class FirewallSQLRepository(FirewallRepository):
             setattr(row, key, value)
         return row
 
+    def name_exists(self, name: str):
+        """Check if a row already exists with this name
+        Args:
+            name (str)
+        Returns:
+            bool
+        """
+        return bool(self.session.query(FirewallModel).filter_by(name=name).first())
+
     def create(self, firewall: Firewall) -> Firewall:
         """Creates a new firewall
 
@@ -40,13 +50,6 @@ class FirewallSQLRepository(FirewallRepository):
         Returns:
             Firewall: newly inserted item
         """
-
-        name_exists = (
-            self.session.query(FirewallModel).filter_by(name=firewall.name).first()
-        )
-        if name_exists:
-            raise ValueError("A firewall with this name already exists")
-
         row = FirewallModel(
             name=firewall.name,
             description=firewall.description,
@@ -107,14 +110,16 @@ class FirewallSQLRepository(FirewallRepository):
             upd (FirewallPatch): potential rows to update
 
         Raises:
-            ValueError: If not found
+            NotFoundError: If not found
 
         Returns:
             Firewall: the patched row
         """
         row = self.session.query(FirewallModel).filter_by(id=firewall_id).first()
         if not row:
-            raise ValueError(f"The firewall id={firewall_id} to update was not found")
+            raise NotFoundError(
+                f"The firewall id={firewall_id} to update was not found"
+            )
 
         row = self.__patch_item(row, upd)
 
@@ -130,14 +135,16 @@ class FirewallSQLRepository(FirewallRepository):
             firewall_id (int): unique id
 
         Raises:
-            ValueError: If not found
+            NotFoundErrorrror: If not found
 
         Returns:
             bool: True | error raised
         """
         row = self.session.query(FirewallModel).filter_by(id=firewall_id).first()
         if not row:
-            raise ValueError(f"The firewall id={firewall_id} to delete was not found")
+            raise NotFoundError(
+                f"The firewall id={firewall_id} to delete was not found"
+            )
 
         self.session.delete(row)
         self.session.commit()
