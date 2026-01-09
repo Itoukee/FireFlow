@@ -78,7 +78,7 @@ class PolicySQLRepository(PolicyRepository):
 
         return policies, total_records
 
-    def get_by_id(self, policy_id: int) -> Policy | None:
+    def get_by_id(self, policy_id: int, firewall_id: int) -> Policy | None:
         """Gets a policy by id
 
         Args:
@@ -87,13 +87,17 @@ class PolicySQLRepository(PolicyRepository):
         Returns:
             Policy | None
         """
-        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
+        row = (
+            self.session.query(PolicyModel)
+            .filter_by(id=policy_id, firewall_id=firewall_id)
+            .first()
+        )
 
         if row:
             return self.__to_entity(row)
         return None
 
-    def update(self, policy_id: int, upd: PolicyPatch):
+    def update(self, policy_id: int, firewall_id: int, upd: PolicyPatch):
         """Patches a policy
 
         Args:
@@ -106,9 +110,15 @@ class PolicySQLRepository(PolicyRepository):
         Returns:
             Policy: the patched row
         """
-        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
+        row = (
+            self.session.query(PolicyModel)
+            .filter_by(id=policy_id, firewall_id=firewall_id)
+            .first()
+        )
         if not row:
-            raise ValueError(f"The policy id={policy_id} to update was not found")
+            raise ValueError(
+                f"The policy id={policy_id} and firewall_id id={firewall_id} to update was not found"
+            )
 
         if upd.name:
             row.name = upd.name

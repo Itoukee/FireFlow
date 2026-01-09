@@ -24,11 +24,11 @@ class PolicyRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, policy_id: int) -> Optional[Policy]:
+    def get_by_id(self, policy_id: int, firewall_id: int) -> Optional[Policy]:
         pass
 
     @abstractmethod
-    def update(self, policy_id: int, upd: PolicyPatch) -> Policy:
+    def update(self, policy_id: int, firewall_id: int, upd: PolicyPatch) -> Policy:
         pass
 
 

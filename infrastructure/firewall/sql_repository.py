@@ -93,7 +93,7 @@ class FirewallSQLRepository(FirewallRepository):
             return self.__to_entity(row)
         return None
 
-    def update(self, firewall_id: int, upd: FirewallPatch):
+    def patch(self, firewall_id: int, upd: FirewallPatch):
         """Patches a firewall
 
         Args:

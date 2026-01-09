@@ -39,21 +39,3 @@ def test_id_not_found(mocker):
     assert not policy
 
     repo.get_by_id.assert_called_once()
-
-
-def test_policy_forbidden(mocker):
-    """Test that you can't access to the policy of another firewall"""
-    repo = mocker.Mock(spec=PolicyRepository)
-    repo.get_by_id.return_value = Policy(
-        id=0,
-        name="policy",
-        firewall_id=0,
-        default_action=DefaultAction.ALLOW,
-        priority=0,
-    )
-
-    use_case = GetPolicyByIdUC(repo)
-    with pytest.raises(ValueError, match="Policy does not belong to this Firewall"):
-        use_case.execute(firewall_id=15, policy_id=0)
-
-    repo.get_by_id.assert_called_once()

@@ -17,9 +17,9 @@ firewall_create_model = api.model(
     },
 )
 
-# Firewall udpate model
-firewall_update_model = api.model(
-    "FirewallUpdate",
+# Firewall patch model
+firewall_patch_model = api.model(
+    "FirewallPatch",
     {
         "name": fields.String(
             required=False, description="The firewall name", min_length=3

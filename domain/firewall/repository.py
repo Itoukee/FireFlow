@@ -26,7 +26,7 @@ class FirewallRepository(ABC):
         pass
 
     @abstractmethod
-    def update(self, firewall_id: int, upd: FirewallPatch) -> Firewall:
+    def patch(self, firewall_id: int, upd: FirewallPatch) -> Firewall:
         pass
 
     @abstractmethod

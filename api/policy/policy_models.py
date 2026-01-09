@@ -28,9 +28,9 @@ policy_create_model = api.model(
     },
 )
 
-# Policy udpate model
-policy_update_model = api.model(
-    "PolicyUpdate",
+# Policy patch model
+policy_patch_model = api.model(
+    "PolicyPatch",
     {
         "name": fields.String(
             required=False, description="The policy name", min_length=3
