@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class FirewallUpdate(BaseModel):
+class FirewallPatch(BaseModel):
     """
     Update model made to avoid making updates on unwanted properties
     """
@@ -18,8 +18,3 @@ class FirewallCreate(BaseModel):
 
     name: str
     description: Optional[str]
-
-
-class GetFirewalls(BaseModel):
-    page: Optional[int] = 0
-    limit: int

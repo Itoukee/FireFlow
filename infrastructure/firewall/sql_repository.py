@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from domain.firewall.entity import Firewall
-from domain.firewall.ports import FirewallUpdate
+from domain.firewall.ports import FirewallPatch
 from domain.firewall.repository import FirewallRepository
 from infrastructure.firewall.sql_model import FirewallModel
 from infrastructure.databases.sql import get_database_session
@@ -16,6 +16,7 @@ class FirewallSQLRepository(FirewallRepository):
         self.session = get_database_session()
 
     def __to_entity(self, item: FirewallModel):
+        """Maps the Sql model to the business entity"""
         return Firewall(
             id=item.id,
             name=item.name,
@@ -33,6 +34,13 @@ class FirewallSQLRepository(FirewallRepository):
         Returns:
             Firewall: newly inserted item
         """
+
+        name_exists = (
+            self.session.query(FirewallModel).filter_by(name=firewall.name).first()
+        )
+        if name_exists:
+            raise ValueError("A firewall with this name already exists")
+
         row = FirewallModel(
             name=firewall.name,
             description=firewall.description,
@@ -85,7 +93,7 @@ class FirewallSQLRepository(FirewallRepository):
             return self.__to_entity(row)
         return None
 
-    def update(self, firewall_id: int, upd: FirewallUpdate):
+    def update(self, firewall_id: int, upd: FirewallPatch):
         """Patch a firewall
 
         Args:
@@ -106,7 +114,6 @@ class FirewallSQLRepository(FirewallRepository):
             row.name = upd.name
         if upd.description:
             row.description = upd.description
-        row.updated_at = datetime.now()
 
         self.session.commit()
         self.session.refresh(row)

@@ -2,16 +2,22 @@ from typing import Literal, Optional
 from datetime import date, datetime
 
 from pydantic import BaseModel
+from enum import Enum
+
+
+class DefaultAction(str, Enum):
+    ALLOW = "ALLOW"
+    DENY = "DENY"
 
 
 class Policy(BaseModel):
     id: Optional[int] = None
     firewall_id: int
     name: str
-    default_action: Literal["deny", "access"]
+    default_action: DefaultAction
     priority: int
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def to_dict(self):
         """

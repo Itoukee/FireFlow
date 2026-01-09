@@ -8,7 +8,7 @@ from api.firewall.firewall_models import (
     firewall_update_model,
 )
 from domain.firewall.use_cases import CreateFirewallUC, PaginateFirewallsUC
-from domain.firewall.ports import FirewallCreate, FirewallUpdate
+from domain.firewall.ports import FirewallCreate, FirewallPatch
 from infrastructure.firewall.sql_repository import FirewallSQLRepository
 
 firewall_repo = FirewallSQLRepository()
@@ -50,7 +50,7 @@ class Firewall(Resource):
             api.abort(400, "JSON body required")
 
         try:
-            firewall_update = FirewallUpdate(**api.payload)
+            firewall_update = FirewallPatch(**api.payload)
         except ValidationError as ve:
             return api.abort(400, ve.errors())
 
@@ -108,8 +108,9 @@ class Firewalls(Resource):
         except ValidationError as ve:
             return api.abort(400, ve.errors())
 
-        firewall_dict = (
-            CreateFirewallUC(firewall_repo).execute(firewall_create).to_dict()
-        )
+        try:
+            firewall = CreateFirewallUC(firewall_repo).execute(firewall_create)
+        except ValueError:
+            return api.abort(400, "A firewall with this name already exists")
 
-        return {"success": True, "data": {"firewall": firewall_dict}}, 201
+        return {"success": True, "data": {"firewall": firewall.to_dict()}}, 201

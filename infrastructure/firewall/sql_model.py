@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from sqlalchemy import Integer, String
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from infrastructure.databases.sql import Base
 
@@ -18,3 +18,5 @@ class FirewallModel(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+
+    policies = relationship("PolicyModel", cascade="all, delete-orphan")

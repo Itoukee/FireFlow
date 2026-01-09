@@ -1,7 +1,7 @@
 from domain.firewall.entity import Firewall
 from domain.firewall.repository import FirewallRepository
 from domain.firewall.use_cases import UpdateFirewallUC
-from domain.firewall.ports import FirewallUpdate
+from domain.firewall.ports import FirewallPatch
 
 
 def test_upd_found(mocker):
@@ -15,7 +15,7 @@ def test_upd_found(mocker):
     )
 
     use_case = UpdateFirewallUC(repo)
-    firewall_update = FirewallUpdate(name="fire", description="")
+    firewall_update = FirewallPatch(name="fire", description="")
 
     assert firewall_update.name == "fire"
     assert firewall_update.description == ""

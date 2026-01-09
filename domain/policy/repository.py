@@ -1,23 +1,23 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 
-from domain.firewall.entity import Firewall
-from domain.firewall.ports import FirewallPatch
+from domain.policy.entity import Policy
 
 
-class FirewallRepository(ABC):
+class PolicyRepository(ABC):
     """
-    Interface to interact with the firewalls
+    Interface to interact with the policies
     """
 
     def __init__(self) -> None:
         pass
 
     @abstractmethod
-    def create(self, firewall: Firewall) -> Firewall:
+    def create(self, firewall_id: int, policy: Policy) -> Policy:
         pass
 
-    @abstractmethod
+
+"""TODO implement the other CRUD operations    
+@abstractmethod
     def paginate(self, page: int, limit: int) -> tuple[list[Firewall], int]:
         pass
 
@@ -32,3 +32,4 @@ class FirewallRepository(ABC):
     @abstractmethod
     def delete(self, firewall_id: int) -> bool:
         pass
+ """
