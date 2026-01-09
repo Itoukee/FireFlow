@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import ForeignKey, Integer, String, Enum as SqlEnum
+from sqlalchemy import Boolean, ForeignKey, Integer, String, Enum as SqlEnum
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from domain.enums import DefaultAction, Protocol
@@ -21,6 +21,7 @@ class RuleModel(Base):
     destination_ip = mapped_column(String, nullable=True)
     port = mapped_column(Integer, nullable=True)
     protocol = mapped_column(SqlEnum(Protocol), nullable=True)
+    enabled = mapped_column(Boolean, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc)

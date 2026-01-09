@@ -10,8 +10,8 @@ class CreateRule(BaseModel):
     action: DefaultAction
     order: int
     enabled: bool
-    source_ip: Optional[int] = None
-    destination_ip: Optional[int] = None
+    source_ip: Optional[str] = None
+    destination_ip: Optional[str] = None
     protocol: Optional[Protocol] = None
     port: Optional[int] = None
 
@@ -21,6 +21,6 @@ class PatchRule(BaseModel):
     action: Optional[DefaultAction] = None
     order: Optional[int] = None
     enabled: Optional[bool] = None
-    source_ip: Optional[int] = None
-    destination_ip: Optional[int] = None
+    source_ip: Optional[str] = None
+    destination_ip: Optional[str] = None
     protocol: Optional[Protocol] = None

@@ -24,6 +24,10 @@ class RuleRepository(ABC):
         pass
 
     @abstractmethod
+    def name_exists_within_parent(self, name: str, policy_id: int) -> bool:
+        pass
+
+    @abstractmethod
     def get_by_id(self, rule_id: int) -> Optional[Rule]:
         pass
 

@@ -28,6 +28,10 @@ class PolicyRepository(ABC):
         pass
 
     @abstractmethod
+    def name_exists_within_parent(self, name: str, firewall_id: int) -> bool:
+        pass
+
+    @abstractmethod
     def update(self, policy_id: int, upd: PolicyPatch) -> Policy:
         pass
 

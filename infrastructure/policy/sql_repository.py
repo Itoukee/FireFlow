@@ -28,6 +28,13 @@ class PolicySQLRepository(PolicyRepository):
             setattr(row, key, value)
         return row
 
+    def name_exists_within_parent(self, name: str, firewall_id: int) -> bool:
+        return bool(
+            self.session.query(PolicyModel)
+            .filter_by(name=name, firewall_id=firewall_id)
+            .first()
+        )
+
     def create(self, policy: Policy) -> Policy:
         """Creates a new policy associated to a firewall
 

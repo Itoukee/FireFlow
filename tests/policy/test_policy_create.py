@@ -23,6 +23,8 @@ def test_create_policy(mocker):
         updated_at=datetime.now(),
     )
 
+    repo.name_exists_within_parent.return_value = False
+
     use_case = CreatePolicyUC(repo, firewall_repo)
     create_policy = PolicyCreate(
         firewall_id=0, name="test_policy", priority=0, default_action=DefaultAction.DENY

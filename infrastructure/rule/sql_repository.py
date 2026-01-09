@@ -20,7 +20,7 @@ class RuleSQLRepository(RuleRepository):
             order=item.order,
             source_ip=item.source_ip,
             destination_ip=item.destination_ip,
-            protocol=item.protocl,
+            protocol=item.protocol,
             port=item.port,
             enabled=item.enabled,
             created_at=item.created_at,
@@ -32,6 +32,13 @@ class RuleSQLRepository(RuleRepository):
         for key, value in upd.model_dump(exclude_unset=True).items():
             setattr(row, key, value)
         return row
+
+    def name_exists_within_parent(self, name: str, policy_id: int) -> bool:
+        return bool(
+            self.session.query(RuleModel)
+            .filter_by(name=name, policy_id=policy_id)
+            .first()
+        )
 
     def create(self, rule: Rule) -> Rule:
         """Creates a new rule associated to a policy

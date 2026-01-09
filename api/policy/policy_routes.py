@@ -127,10 +127,7 @@ class Policies(Resource):
             )
 
         except NotFoundError as ne:
-            return api.abort(
-                404,
-                f"The firewall id={firewall_id} related was not found. Couldn't create the policy.",
-            )
+            return api.abort(404, ne)
 
         return {
             "success": True,

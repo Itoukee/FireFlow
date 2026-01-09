@@ -9,10 +9,10 @@ class Rule(BaseModel):
     id: Optional[int] = None
     policy_id: int
     name: str
-    source_ip: int
-    destination_ip: int
+    source_ip: Optional[str]
+    destination_ip: Optional[str]
     protocol: Protocol
-    port: int
+    port: Optional[int]
     action: DefaultAction
     enabled: bool
     order: int

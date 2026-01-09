@@ -28,6 +28,10 @@ class CreatePolicyUC:
         if not firewall:
             raise NotFoundError(f"The firewall id={firewall_id} doesn't exist")
 
+        exists = self.repo.name_exists_within_parent(create_policy.name, firewall_id)
+        if exists:
+            raise ValueError("Policy with this name already exists")
+
         policy = Policy(
             firewall_id=firewall_id,
             name=create_policy.name,
