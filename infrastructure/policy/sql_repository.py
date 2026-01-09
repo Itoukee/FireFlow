@@ -1,4 +1,5 @@
 from domain.policy.entity import Policy
+from domain.policy.ports import PolicyPatch
 from domain.policy.repository import PolicyRepository
 from infrastructure.databases.sql import get_database_session
 from infrastructure.firewall.sql_model import FirewallModel
@@ -52,3 +53,71 @@ class PolicySQLRepository(PolicyRepository):
         policy.updated_at = row.updated_at.now()
 
         return policy
+
+    def paginate_by_firewall(
+        self, firewall_id: int, page: int, limit: int
+    ) -> tuple[list[Policy], int]:
+        """
+        Returns a list of policies with the total count of records
+        Uses pagination for optimization
+
+        Args:
+            page (int)
+            limit (int)
+
+        Returns:
+            tuple[list[Policy], int]
+        """
+        query = self.session.query(PolicyModel).filter_by(firewall_id=firewall_id)
+        total_records = query.count()
+
+        # Starts at page 0
+        items = query.offset(page * limit).limit(limit).all()
+
+        policies = [self.__to_entity(item) for item in items]
+
+        return policies, total_records
+
+    def get_by_id(self, policy_id: int) -> Policy | None:
+        """Gets a policy by id
+
+        Args:
+            policy_id: unique id
+
+        Returns:
+            Policy | None
+        """
+        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
+
+        if row:
+            return self.__to_entity(row)
+        return None
+
+    def update(self, policy_id: int, upd: PolicyPatch):
+        """Patches a policy
+
+        Args:
+            policy_id (int): unique id
+            upd (PolicyPatch): potential rows to update
+
+        Raises:
+            ValueError: If not found
+
+        Returns:
+            Policy: the patched row
+        """
+        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
+        if not row:
+            raise ValueError(f"The policy id={policy_id} to update was not found")
+
+        if upd.name:
+            row.name = upd.name
+        if upd.default_action:
+            row.default_action = upd.default_action
+        if upd.priority:
+            row.priority = upd.priority
+
+        self.session.commit()
+        self.session.refresh(row)
+
+        return self.__to_entity(row)

@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from domain.policy.entity import Policy
+from domain.policy.ports import PolicyPatch
 
 
 class PolicyRepository(ABC):
@@ -15,19 +17,22 @@ class PolicyRepository(ABC):
     def create(self, firewall_id: int, policy: Policy) -> Policy:
         pass
 
+    @abstractmethod
+    def paginate_by_firewall(
+        self, firewall_id: int, page: int, limit: int
+    ) -> tuple[list[Policy], int]:
+        pass
+
+    @abstractmethod
+    def get_by_id(self, policy_id: int) -> Optional[Policy]:
+        pass
+
+    @abstractmethod
+    def update(self, policy_id: int, upd: PolicyPatch) -> Policy:
+        pass
+
 
 """TODO implement the other CRUD operations    
-@abstractmethod
-    def paginate(self, page: int, limit: int) -> tuple[list[Firewall], int]:
-        pass
-
-    @abstractmethod
-    def get_by_id(self, firewall_id: int) -> Optional[Firewall]:
-        pass
-
-    @abstractmethod
-    def update(self, firewall_id: int, upd: FirewallPatch) -> Firewall:
-        pass
 
     @abstractmethod
     def delete(self, firewall_id: int) -> bool:

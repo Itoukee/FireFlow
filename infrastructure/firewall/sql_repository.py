@@ -94,11 +94,11 @@ class FirewallSQLRepository(FirewallRepository):
         return None
 
     def update(self, firewall_id: int, upd: FirewallPatch):
-        """Patch a firewall
+        """Patches a firewall
 
         Args:
             firewall_id (int): unique id
-            upd (FirewallUpdate): potential rows to update
+            upd (FirewallPatch): potential rows to update
 
         Raises:
             ValueError: If not found
