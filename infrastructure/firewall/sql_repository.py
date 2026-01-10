@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from domain.exceptions import NotFoundError
 from domain.firewall.entity import Firewall
 from domain.firewall.ports import FirewallPatch

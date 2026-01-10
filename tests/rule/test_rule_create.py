@@ -1,6 +1,3 @@
-from datetime import datetime
-
-
 from domain.enums import DefaultAction, Protocol
 from domain.policy.repository import PolicyRepository
 from domain.rule.entity import Rule

@@ -1,6 +1,4 @@
 from domain.enums import DefaultAction, Protocol
-from domain.policy.entity import Policy
-from domain.policy.use_cases import PaginatePoliciesByFirewallUC
 from domain.rule.entity import Rule
 from domain.rule.repository import RuleRepository
 from domain.rule.use_cases import PaginateRulesByPolicyUC
