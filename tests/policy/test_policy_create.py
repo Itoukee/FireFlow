@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from domain.policy.entity import DefaultAction, Policy
+from domain.enums import DefaultAction
+from domain.firewall.repository import FirewallRepository
+from domain.policy.entity import Policy
 from domain.policy.repository import PolicyRepository
 from domain.policy.use_cases import CreatePolicyUC
 from domain.policy.ports import PolicyCreate
@@ -9,6 +11,7 @@ from domain.policy.ports import PolicyCreate
 def test_create_policy(mocker):
     """Testing the creation of a policy"""
     repo = mocker.Mock(spec=PolicyRepository)
+    firewall_repo = mocker.Mock(spec=FirewallRepository)
 
     repo.create.return_value = Policy(
         id=0,
@@ -20,7 +23,9 @@ def test_create_policy(mocker):
         updated_at=datetime.now(),
     )
 
-    use_case = CreatePolicyUC(repo)
+    repo.name_exists_within_parent.return_value = False
+
+    use_case = CreatePolicyUC(repo, firewall_repo)
     create_policy = PolicyCreate(
         firewall_id=0, name="test_policy", priority=0, default_action=DefaultAction.DENY
     )

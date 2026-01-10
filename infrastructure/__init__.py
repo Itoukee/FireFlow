@@ -2,3 +2,4 @@
 from infrastructure.databases.sql import Base
 from infrastructure.firewall.sql_model import FirewallModel
 from infrastructure.policy.sql_model import PolicyModel
+from infrastructure.rule.sql_model import RuleModel

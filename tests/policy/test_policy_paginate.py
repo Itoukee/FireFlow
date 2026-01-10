@@ -1,4 +1,5 @@
-from domain.policy.entity import DefaultAction, Policy
+from domain.enums import DefaultAction
+from domain.policy.entity import Policy
 from domain.policy.repository import PolicyRepository
 from domain.policy.use_cases import PaginatePoliciesByFirewallUC
 
@@ -6,16 +7,16 @@ from domain.policy.use_cases import PaginatePoliciesByFirewallUC
 def test_paginate_empty(mocker):
     """
     Testing the pagination
-    With no firewalls
+    With no policies
     """
     repo = mocker.Mock(spec=PolicyRepository)
     repo.paginate_by_firewall.return_value = ([], 0)
 
     use_case = PaginatePoliciesByFirewallUC(repo)
 
-    firewalls, total_records = use_case.execute(0, 1, 15)
+    policies, total_records = use_case.execute(0, 1, 15)
 
-    assert firewalls == []
+    assert policies == []
     assert total_records == 0
 
     repo.paginate_by_firewall.assert_called_once()

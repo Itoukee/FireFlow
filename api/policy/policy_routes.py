@@ -3,6 +3,7 @@ from flask_restx import Resource
 from pydantic import ValidationError
 
 from api.policy.policy_models import api, policy_create_model, policy_patch_model
+from domain.exceptions import NotFoundError
 from domain.policy.ports import PolicyCreate, PolicyPatch
 from domain.policy.use_cases import (
     CreatePolicyUC,
@@ -11,13 +12,15 @@ from domain.policy.use_cases import (
     PatchPolicyUC,
     DeletePolicyByIdUC,
 )
+from infrastructure.firewall.sql_repository import FirewallSQLRepository
 from infrastructure.policy.sql_repository import PolicySQLRepository
 
 policy_repo = PolicySQLRepository()
+firewall_repo = FirewallSQLRepository()
 
 
 @api.route("/<int:policy_id>")
-class Policy(Resource):
+class PolicyResource(Resource):
     @api.doc("Get one by id")
     def get(self, firewall_id: int, policy_id: int):
         """Get a specific policy
@@ -29,12 +32,12 @@ class Policy(Resource):
         if not isinstance(firewall_id, int) or not isinstance(policy_id, int):
             api.abort(400, "The firewall_id and policy_id must be an integer")
         try:
-            policy = GetPolicyByIdUC(policy_repo).execute(firewall_id, policy_id)
-        except ValueError as err:
-            return api.abort(
-                404,
-                str(err),
+            policy = GetPolicyByIdUC(policy_repo, firewall_repo).execute(
+                firewall_id, policy_id
             )
+        except NotFoundError as err:
+            return api.abort(404, err)
+
         if not policy:
             return api.abort(404, f"Policy id={policy_id} not found")
 
@@ -58,11 +61,11 @@ class Policy(Resource):
             return api.abort(400, ve.errors())
 
         try:
-            policy = PatchPolicyUC(policy_repo).execute(
+            policy = PatchPolicyUC(policy_repo, firewall_repo).execute(
                 policy_id, firewall_id, policy_patch
             )
-        except ValueError:
-            return api.abort(404, f"Policy id={policy_id} not found")
+        except NotFoundError as ne:
+            return api.abort(404, ne)
         return {"success": True, "data": {"policy": policy.to_dict()}}
 
     def delete(self, firewall_id: int, policy_id: int):
@@ -73,14 +76,16 @@ class Policy(Resource):
         if not isinstance(firewall_id, int) or not isinstance(policy_id, int):
             api.abort(400, "The firewall_id and policy_id must be an integer")
         try:
-            DeletePolicyByIdUC(policy_repo).execute(firewall_id, policy_id)
-        except ValueError as value_err:
-            api.abort(404, str(value_err))
+            DeletePolicyByIdUC(policy_repo, firewall_repo).execute(
+                firewall_id, policy_id
+            )
+        except NotFoundError as ne:
+            api.abort(404, ne)
         return "", 204
 
 
 @api.route("/")
-class Policies(Resource):
+class PoliciesResource(Resource):
 
     @api.doc(
         "Paginate policies by firewall_id",
@@ -117,13 +122,12 @@ class Policies(Resource):
             return api.abort(400, ve.errors())
 
         try:
-            policy = CreatePolicyUC(policy_repo).execute(firewall_id, policy_create)
-
-        except ValueError:
-            return api.abort(
-                404,
-                f"The firewall id={firewall_id} related was not found. Couldn't create the policy.",
+            policy = CreatePolicyUC(policy_repo, firewall_repo).execute(
+                firewall_id, policy_create
             )
+
+        except NotFoundError as ne:
+            return api.abort(404, ne)
 
         return {
             "success": True,

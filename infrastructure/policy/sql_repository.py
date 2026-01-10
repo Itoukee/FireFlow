@@ -1,8 +1,8 @@
+from domain.exceptions import NotFoundError
 from domain.policy.entity import Policy
 from domain.policy.ports import PolicyPatch
 from domain.policy.repository import PolicyRepository
 from infrastructure.databases.sql import get_database_session
-from infrastructure.firewall.sql_model import FirewallModel
 from infrastructure.policy.sql_model import PolicyModel
 
 
@@ -22,22 +22,29 @@ class PolicySQLRepository(PolicyRepository):
             updated_at=item.updated_at,
         )
 
-    def create(self, firewall_id: int, policy: Policy) -> Policy:
+    def __patch_item(self, row: PolicyModel, upd: PolicyPatch):
+        """Helper to patch the attributes of a row"""
+        for key, value in upd.model_dump(exclude_unset=True).items():
+            setattr(row, key, value)
+        return row
+
+    def name_exists_within_parent(self, name: str, firewall_id: int) -> bool:
+        return bool(
+            self.session.query(PolicyModel)
+            .filter_by(name=name, firewall_id=firewall_id)
+            .first()
+        )
+
+    def create(self, policy: Policy) -> Policy:
         """Creates a new policy associated to a firewall
 
         Args:
-            firewall_id
+
             policy (Policy)
 
         Returns:
             Policy
         """
-
-        firewall_parent = (
-            self.session.query(FirewallModel).filter_by(id=firewall_id).first()
-        )
-        if not firewall_parent:
-            raise ValueError("Can't create a policy without an existing firewall")
 
         row = PolicyModel(
             firewall_id=policy.firewall_id,
@@ -78,7 +85,7 @@ class PolicySQLRepository(PolicyRepository):
 
         return policies, total_records
 
-    def get_by_id(self, policy_id: int, firewall_id: int) -> Policy | None:
+    def get_by_id(self, policy_id: int) -> Policy | None:
         """Gets a policy by id
 
         Args:
@@ -87,73 +94,51 @@ class PolicySQLRepository(PolicyRepository):
         Returns:
             Policy | None
         """
-        row = (
-            self.session.query(PolicyModel)
-            .filter_by(id=policy_id, firewall_id=firewall_id)
-            .first()
-        )
+        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
 
         if row:
             return self.__to_entity(row)
         return None
 
-    def update(self, policy_id: int, firewall_id: int, upd: PolicyPatch):
+    def update(self, policy_id: int, upd: PolicyPatch):
         """Patches a policy
 
         Args:
             policy_id (int): unique id
-            upd (PolicyPatch): potential rows to update
+            upd (PolicyPatch): potential attributes to update
 
         Raises:
-            ValueError: If not found
+            NotFoundError: If not found
 
         Returns:
             Policy: the patched row
         """
-        row = (
-            self.session.query(PolicyModel)
-            .filter_by(id=policy_id, firewall_id=firewall_id)
-            .first()
-        )
+        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
         if not row:
-            raise ValueError(
-                f"The policy id={policy_id} and firewall_id id={firewall_id} to update was not found"
-            )
+            raise NotFoundError(f"The policy id={policy_id} to update was not found")
 
-        if upd.name:
-            row.name = upd.name
-        if upd.default_action:
-            row.default_action = upd.default_action
-        if upd.priority:
-            row.priority = upd.priority
+        row = self.__patch_item(row, upd)
 
         self.session.commit()
         self.session.refresh(row)
 
         return self.__to_entity(row)
 
-    def delete(self, firewall_id: int, policy_id: int) -> bool:
+    def delete(self, policy_id: int) -> bool:
         """Delete a policy
 
         Args:
-            firewall_id (int): unique id
             policy_id (int): unique id
 
         Raises:
-            ValueError: If not found
+            NotFoundError: If not found
 
         Returns:
             bool: True | error raised
         """
-        row = (
-            self.session.query(PolicyModel)
-            .filter_by(id=policy_id, firewall_id=firewall_id)
-            .first()
-        )
+        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
         if not row:
-            raise ValueError(
-                f"The policy id={policy_id} and firewall id={firewall_id} to delete was not found"
-            )
+            raise NotFoundError(f"The policy id={policy_id} to delete was not found")
 
         self.session.delete(row)
         self.session.commit()

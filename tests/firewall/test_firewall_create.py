@@ -17,6 +17,7 @@ def test_create_firewall(mocker):
         created_at=datetime.now(),
         updated_at=datetime.now(),
     )
+    repo.name_exists.return_value = False
 
     use_case = CreateFirewallUC(repo)
     create_firewall = FirewallCreate(name="firetest", description="fire description")

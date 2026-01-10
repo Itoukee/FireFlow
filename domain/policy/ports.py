@@ -1,8 +1,7 @@
-from datetime import datetime
-from typing import Literal, Optional
+from typing import Optional
 from pydantic import BaseModel
 
-from domain.policy.entity import DefaultAction
+from domain.enums import DefaultAction
 
 
 class PolicyCreate(BaseModel):

@@ -29,12 +29,3 @@ firewall_patch_model = api.model(
         ),
     },
 )
-
-# Firewall pagination model
-firewall_paginate = api.model(
-    "FirewallPaginate",
-    {
-        "page": fields.Integer(required=True, description="The current page"),
-        "limit": fields.Integer(required=True, description="The current page"),
-    },
-)

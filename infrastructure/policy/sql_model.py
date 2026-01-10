@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 from sqlalchemy import ForeignKey, Integer, String, Enum as SqlEnum
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from domain.policy.entity import DefaultAction
+from domain.enums import DefaultAction
 from infrastructure.databases.sql import Base
 
 
@@ -16,7 +16,6 @@ class PolicyModel(Base):
     )
     default_action = mapped_column(SqlEnum(DefaultAction), nullable=False)
     priority = mapped_column(Integer, nullable=False)
-    name = mapped_column(String, nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc)
     )
@@ -24,3 +23,5 @@ class PolicyModel(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+
+    rules = relationship("RuleModel", cascade="all, delete-orphan")

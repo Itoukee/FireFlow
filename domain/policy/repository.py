@@ -14,7 +14,7 @@ class PolicyRepository(ABC):
         pass
 
     @abstractmethod
-    def create(self, firewall_id: int, policy: Policy) -> Policy:
+    def create(self, policy: Policy) -> Policy:
         pass
 
     @abstractmethod
@@ -24,13 +24,17 @@ class PolicyRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, policy_id: int, firewall_id: int) -> Optional[Policy]:
+    def get_by_id(self, policy_id: int) -> Optional[Policy]:
         pass
 
     @abstractmethod
-    def update(self, policy_id: int, firewall_id: int, upd: PolicyPatch) -> Policy:
+    def name_exists_within_parent(self, name: str, firewall_id: int) -> bool:
         pass
 
     @abstractmethod
-    def delete(self, firewall_id: int, policy_id: int) -> bool:
+    def update(self, policy_id: int, upd: PolicyPatch) -> Policy:
+        pass
+
+    @abstractmethod
+    def delete(self, policy_id: int) -> bool:
         pass
