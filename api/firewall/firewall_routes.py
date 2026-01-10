@@ -22,7 +22,7 @@ firewall_repo = FirewallSQLRepository()
 
 
 @api.route("/<int:firewall_id>")
-class Firewall(Resource):
+class FirewallResource(Resource):
 
     @api.doc("Get one by id", params={"firewall_id": "Unique identifier"})
     def get(self, firewall_id: int):
@@ -86,7 +86,7 @@ class Firewall(Resource):
 
 
 @api.route("/")
-class Firewalls(Resource):
+class FirewallsResource(Resource):
     @api.doc(
         "Get many firewalls with pagination",
         params={"page": "target page", "limit": "maximum elements per page"},

@@ -20,7 +20,7 @@ firewall_repo = FirewallSQLRepository()
 
 
 @api.route("/<int:policy_id>")
-class Policy(Resource):
+class PolicyResource(Resource):
     @api.doc("Get one by id")
     def get(self, firewall_id: int, policy_id: int):
         """Get a specific policy
@@ -85,7 +85,7 @@ class Policy(Resource):
 
 
 @api.route("/")
-class Policies(Resource):
+class PoliciesResource(Resource):
 
     @api.doc(
         "Paginate policies by firewall_id",

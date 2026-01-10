@@ -21,7 +21,7 @@ policy_repo = PolicySQLRepository()
 
 
 @api.route("/<int:rule_id>")
-class Rule(Resource):
+class RuleResource(Resource):
     @api.doc("Get one by id")
     def get(self, firewall_id: int, policy_id: int, rule_id: int):
         """Get a specific rule
@@ -100,7 +100,7 @@ class Rule(Resource):
 
 
 @api.route("/")
-class Rules(Resource):
+class RulesResource(Resource):
 
     @api.doc(
         "Paginate rules of a policy from a firewall",
