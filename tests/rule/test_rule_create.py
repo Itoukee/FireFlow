@@ -25,8 +25,6 @@ def test_create_rule(mocker):
         enabled=False,
         port=None,
         action=DefaultAction.DENY,
-        created_at=datetime.now(),
-        updated_at=datetime.now(),
     )
 
     repo.name_exists_within_parent.return_value = False
