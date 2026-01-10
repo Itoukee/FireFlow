@@ -3,7 +3,7 @@ from flask_restx import Resource
 from pydantic import ValidationError
 
 from api.rule.rule_model import api, rule_create_model, rule_patch_model
-from domain.exceptions import NotFoundError
+from domain.exceptions import NotFoundError, ForbiddenError
 from domain.rule.ports import CreateRule, PatchRule
 from domain.rule.use_cases import (
     PaginateRulesByPolicyUC,
@@ -38,7 +38,7 @@ class RuleResource(Resource):
             api.abort(400, "The ids must be an integer")
         try:
             rule = GetRuleByIdUC(rule_repo, policy_repo).execute(
-                rule_id=rule_id, policy_id=policy_id
+                rule_id=rule_id, firewall_id=firewall_id, policy_id=policy_id
             )
         except NotFoundError as err:
             return api.abort(404, err)
@@ -73,10 +73,13 @@ class RuleResource(Resource):
 
         try:
             rule = PatchRuleUC(rule_repo, policy_repo).execute(
-                rule_id, policy_id, rule_patch
+                rule_id, firewall_id, policy_id, rule_patch
             )
         except NotFoundError as ne:
             return api.abort(404, ne)
+        except ForbiddenError as fe:
+            return api.abort(403, fe)
+
         return {"success": True, "data": {"rule": rule.to_dict()}}
 
     def delete(self, firewall_id: int, policy_id: int, rule_id: int):
@@ -93,7 +96,9 @@ class RuleResource(Resource):
         ):
             api.abort(400, "The ids must be an integer")
         try:
-            DeleteRuleByIdUC(rule_repo, policy_repo).execute(rule_id, policy_id)
+            DeleteRuleByIdUC(rule_repo, policy_repo).execute(
+                rule_id, firewall_id, policy_id
+            )
         except NotFoundError as ne:
             api.abort(404, ne)
         return "", 204
@@ -139,7 +144,9 @@ class RulesResource(Resource):
             return api.abort(400, ve.errors())
 
         try:
-            rule = CreateRuleUC(rule_repo, policy_repo).execute(policy_id, create_rule)
+            rule = CreateRuleUC(rule_repo, policy_repo).execute(
+                policy_id, firewall_id, create_rule
+            )
         except NotFoundError as ne:
             return api.abort(404, ne)
 

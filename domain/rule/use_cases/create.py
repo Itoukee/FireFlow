@@ -11,7 +11,7 @@ class CreateRuleUC:
         self.repo = repo
         self.policy_repo = policy_repo
 
-    def execute(self, policy_id: int, create_rule: CreateRule):
+    def execute(self, policy_id: int, firewall_id: int, create_rule: CreateRule):
         """Use case of creating the policy
 
         Args:
@@ -22,13 +22,13 @@ class CreateRuleUC:
             Rule
         """
 
-        policy = self.policy_repo.get_by_id(policy_id)
+        policy = self.policy_repo.get_by_id_and_firewall(policy_id, firewall_id)
         if not policy:
             raise NotFoundError(f"The policy id={policy_id} doesn't exist")
 
         exists = self.repo.name_exists_within_parent(create_rule.name, policy_id)
         if exists:
-            raise ValueError("Firewall with this name already exists")
+            raise ValueError("Rule with this name already exists")
 
         rule = Rule(
             policy_id=policy_id,

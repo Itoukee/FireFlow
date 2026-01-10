@@ -31,7 +31,7 @@ def test_create_rule(mocker):
         policy_id=0, name="test_rule", order=0, action=DefaultAction.DENY, enabled=False
     )
 
-    rule = use_case.execute(0, create_policy)
+    rule = use_case.execute(0, 0, create_policy)
 
     assert rule.id == 0
     assert rule.name == "test_rule"

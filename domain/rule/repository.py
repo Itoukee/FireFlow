@@ -28,7 +28,7 @@ class RuleRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, rule_id: int) -> Optional[Rule]:
+    def get_by_id_and_policy(self, rule_id: int, policy_id: int) -> Optional[Rule]:
         pass
 
     @abstractmethod

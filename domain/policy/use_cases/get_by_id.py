@@ -28,6 +28,6 @@ class GetPolicyByIdUC:
                 f"The firewall id={firewall_id} does not exist, the policy can't exist"
             )
 
-        policy = self.repo.get_by_id(policy_id)
+        policy = self.repo.get_by_id_and_firewall(policy_id, firewall_id)
 
         return policy

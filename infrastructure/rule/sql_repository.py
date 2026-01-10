@@ -95,16 +95,21 @@ class RuleSQLRepository(RuleRepository):
 
         return policies, total_records
 
-    def get_by_id(self, rule_id: int) -> Rule | None:
-        """Gets a rule by id
+    def get_by_id_and_policy(self, rule_id: int, policy_id: int) -> Rule | None:
+        """Gets a rule by id and its policy_id
 
         Args:
             rule_id: unique id
+            policy_id: unique id
 
         Returns:
             Rule | None
         """
-        row = self.session.query(RuleModel).filter_by(id=rule_id).first()
+        row = (
+            self.session.query(RuleModel)
+            .filter_by(id=rule_id, policy_id=policy_id)
+            .first()
+        )
 
         if row:
             return self.__to_entity(row)

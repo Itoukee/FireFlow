@@ -1,5 +1,5 @@
 from domain.policy.repository import PolicyRepository
-from domain.policy.use_cases import DeletePolicyByIdUC
+from domain.rule.use_cases import DeleteRuleByIdUC
 from domain.rule.repository import RuleRepository
 
 
@@ -10,9 +10,9 @@ def test_delete(mocker):
 
     repo.delete.return_value = True
 
-    use_case = DeletePolicyByIdUC(repo, policy_repo)
+    use_case = DeleteRuleByIdUC(repo, policy_repo)
 
-    succeed = use_case.execute(0, 0)
+    succeed = use_case.execute(0, 0, 0)
 
     assert succeed
 
