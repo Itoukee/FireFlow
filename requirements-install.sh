@@ -6,5 +6,6 @@ pip install -U Flask-SQLAlchemy
 pip install alembic
 pip install -U pytest
 pip install pytest-mock
+pip install flake8
 
 pip freeze > requirements.txt
