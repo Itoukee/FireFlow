@@ -55,7 +55,7 @@ rule_patch_model = api.model(
         "source_ip": fields.String(
             required=False, description="Source ip of the request"
         ),
-        "dest_ip": fields.String(
+        "destination_ip": fields.String(
             required=False, description="Destination ip of the request"
         ),
         "port": fields.Integer(required=False, description="Target port"),

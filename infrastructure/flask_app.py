@@ -1,8 +1,10 @@
 from flask import Flask
 from flask_restx import Api
+
 from api.firewall.firewall_routes import api as firewall_ns
 from api.policy.policy_routes import api as policy_ns
 from api.rule.rule_routes import api as rule_ns
+from api.simulate.simulate_routes import api as simulate_ns
 
 
 def create_app():
@@ -16,5 +18,6 @@ def create_app():
     api.add_namespace(firewall_ns)
     api.add_namespace(policy_ns)
     api.add_namespace(rule_ns)
+    api.add_namespace(simulate_ns)
 
     return app

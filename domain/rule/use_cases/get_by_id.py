@@ -12,10 +12,11 @@ class GetRuleByIdUC:
         self.repo = repo
         self.policy_repo = policy_repo
 
-    def execute(self, rule_id: int, policy_id: int):
+    def execute(self, rule_id: int, firewall_id: int, policy_id: int):
         """Executes the use case
         Args:
             rule_id (int)
+            firewall_id (int)
             policy_id (int)
 
         Raises:
@@ -24,12 +25,12 @@ class GetRuleByIdUC:
         Returns:
             _type_: Rule | None
         """
-        policy = self.policy_repo.get_by_id(policy_id)
+        policy = self.policy_repo.get_by_id_and_firewall(policy_id, firewall_id)
         if not policy:
             raise NotFoundError(
                 f"The policy id={policy_id} does not exist, the rule can't exist"
             )
 
-        rule = self.repo.get_by_id(rule_id)
+        rule = self.repo.get_by_id_and_policy(rule_id, policy_id)
 
         return rule

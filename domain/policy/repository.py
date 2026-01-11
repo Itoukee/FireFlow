@@ -24,7 +24,9 @@ class PolicyRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, policy_id: int) -> Optional[Policy]:
+    def get_by_id_and_firewall(
+        self, policy_id: int, firewall_id: int
+    ) -> Optional[Policy]:
         pass
 
     @abstractmethod

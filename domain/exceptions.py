@@ -2,5 +2,5 @@ class NotFoundError(Exception):
     """The resource does not exist"""
 
 
-class Forbidden(Exception):
+class ForbiddenError(Exception):
     """The context has not access"""

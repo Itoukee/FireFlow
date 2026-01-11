@@ -85,16 +85,21 @@ class PolicySQLRepository(PolicyRepository):
 
         return policies, total_records
 
-    def get_by_id(self, policy_id: int) -> Policy | None:
-        """Gets a policy by id
+    def get_by_id_and_firewall(self, policy_id: int, firewall_id: int) -> Policy | None:
+        """Gets a policy by id and firewall_id
 
         Args:
             policy_id: unique id
+            firewall_id: unique id
 
         Returns:
             Policy | None
         """
-        row = self.session.query(PolicyModel).filter_by(id=policy_id).first()
+        row = (
+            self.session.query(PolicyModel)
+            .filter_by(id=policy_id, firewall_id=firewall_id)
+            .first()
+        )
 
         if row:
             return self.__to_entity(row)

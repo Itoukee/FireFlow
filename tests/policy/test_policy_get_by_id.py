@@ -10,7 +10,7 @@ def test_id_found(mocker):
     repo = mocker.Mock(spec=PolicyRepository)
     firewall_repo = mocker.Mock(spec=FirewallRepository)
 
-    repo.get_by_id.return_value = Policy(
+    repo.get_by_id_and_firewall.return_value = Policy(
         id=0,
         name="policy",
         firewall_id=0,
@@ -26,13 +26,13 @@ def test_id_found(mocker):
     assert policy.id == 0
     assert policy.firewall_id == 0
 
-    repo.get_by_id.assert_called_once()
+    repo.get_by_id_and_firewall.assert_called_once()
 
 
 def test_id_not_found(mocker):
     """Testing a get by id where none is found"""
     repo = mocker.Mock(spec=PolicyRepository)
-    repo.get_by_id.return_value = None
+    repo.get_by_id_and_firewall.return_value = None
 
     firewall_repo = mocker.Mock(spec=FirewallRepository)
 
@@ -41,4 +41,4 @@ def test_id_not_found(mocker):
 
     assert not policy
 
-    repo.get_by_id.assert_called_once()
+    repo.get_by_id_and_firewall.assert_called_once()

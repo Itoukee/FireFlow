@@ -1,6 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel
 
+from domain.rule.entity import Rule
+
 
 class FirewallPatch(BaseModel):
     """
@@ -18,3 +20,18 @@ class FirewallCreate(BaseModel):
 
     name: str
     description: Optional[str]
+
+
+class ChargedPolicy(BaseModel):
+    id: int
+    name: str
+    default_action: str
+    priority: Optional[int]
+    rules: list[Rule]
+
+
+class ChargedFirewall(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    policies: list[ChargedPolicy]

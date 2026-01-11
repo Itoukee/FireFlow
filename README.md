@@ -18,7 +18,11 @@ You need a .env file that is not provided. Use the .env.example to get the keys 
     - `alembic revision -m "revision message"`
  - Run the last migration 
     - `alembic upgrade head`
-
+ - Set the last migration as the current one : 
+    - `alembic stamp head`
+ - Run the server in dev mode
+    - `python run.py`
+    
 ## Production use
 
 Run `docker compose up --build`
