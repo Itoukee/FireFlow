@@ -29,10 +29,6 @@ This packet will not match any rule. It partially matches some rules, but that d
 
 However, if the ip was `192.168.1.2`, it would've matched the first rule and be allowed.
 
-## Code architecture
-
-This architecture is inspired by Domain Driven Development. This service is coded respecting a clear separation between the implementation and the business rules.\
-![Architecture](./documentation/architecture.png)
 
 ## Environnement requirements
 You need a .env file that is not provided. Use the .env.example to get the keys and set your values as you need
@@ -59,7 +55,15 @@ Such as `http://localhost:8080/`
     
 ## Production use
 
-Run `docker compose up --build`
+Run `docker compose up --build`\
+
+Uses a WSGI server. You can set more or less workers as you wish. 4 is the default.
+
+## Code architecture
+
+This architecture is inspired by Domain Driven Development. This service is coded respecting a clear separation between the implementation and the business rules.\
+![Architecture](./documentation/architecture.png)
+
 
 ## Testing
 
