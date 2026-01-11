@@ -35,7 +35,7 @@ class FirewallSQLRepository(FirewallRepository):
         Args:
             item (FirewallModel)
         """
-        ## Should order in db but had an issue with joinedload
+        # Should order in db but had an issue with joinedload
         return ChargedFirewall(
             id=item.id,
             name=item.name,
