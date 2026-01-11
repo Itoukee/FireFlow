@@ -23,7 +23,7 @@ policy_create_model = api.model(
             description="Policy default action when no rule matches",
         ),
         "priority": fields.Integer(
-            required=False, description="Priority (Ascending order)"
+            required=False, description="Priority (Ascending order)", example=0
         ),
     },
 )
@@ -41,16 +41,7 @@ policy_patch_model = api.model(
             description="Policy default action when no rule matches",
         ),
         "priority": fields.Integer(
-            required=False, description="Priority (Ascending order)"
+            required=False, description="Priority (Ascending order)", example=0
         ),
-    },
-)
-
-# Policy pagination model
-policy_paginate = api.model(
-    "PolicyPaginate",
-    {
-        "page": fields.Integer(required=True, description="The current page"),
-        "limit": fields.Integer(required=True, description="The current page"),
     },
 )
