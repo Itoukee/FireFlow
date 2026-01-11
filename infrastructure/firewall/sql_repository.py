@@ -29,6 +29,13 @@ class FirewallSQLRepository(FirewallRepository):
         )
 
     def __to_charged_firewall(self, item: FirewallModel):
+        """Maps a firewall to its entire entity
+        Surcharged by its children
+
+        Args:
+            item (FirewallModel)
+        """
+        ## Should order in db but had an issue with joinedload
         return ChargedFirewall(
             id=item.id,
             name=item.name,
@@ -52,10 +59,10 @@ class FirewallSQLRepository(FirewallRepository):
                             enabled=r.enabled,
                             order=r.order,
                         )
-                        for r in p.rules
+                        for r in sorted(p.rules, key=lambda x: x.order)
                     ],
                 )
-                for p in item.policies
+                for p in sorted(item.policies, key=lambda x: x.priority)
             ],
         )
 

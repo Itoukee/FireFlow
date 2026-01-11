@@ -3,12 +3,14 @@ import ipaddress
 from typing import Optional
 from pydantic import BaseModel, field_validator
 
+from domain.enums import Protocol
+
 
 class Packet(BaseModel):
     source_ip: str
     destination_ip: str
     port: Optional[int] = None
-    protocol: Optional[str] = None
+    protocol: Protocol = Protocol.ANY
 
     @field_validator("source_ip", "destination_ip")
     @classmethod

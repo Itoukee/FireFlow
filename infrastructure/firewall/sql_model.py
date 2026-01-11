@@ -20,7 +20,10 @@ class FirewallModel(Base):
     )
 
     policies = relationship(
-        "PolicyModel", cascade="all, delete-orphan", back_populates="firewall"
+        "PolicyModel",
+        cascade="all, delete-orphan",
+        back_populates="firewall",
+        order_by="PolicyModel.priority.asc()",
     )
 
     __table_args__ = (Index("idx_firewall_name", "name"),)
