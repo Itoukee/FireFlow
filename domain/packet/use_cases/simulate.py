@@ -6,6 +6,7 @@ from domain.firewall.ports import ChargedPolicy
 from domain.firewall.repository import FirewallRepository
 from domain.exceptions import NotFoundError
 from domain.packet.entity import Packet
+from domain.packet.ports import PacketAnswer
 
 
 class SimulateFirewallUC:
@@ -55,7 +56,7 @@ class SimulateFirewallUC:
 
     def __check_policy_rules(
         self, policy: ChargedPolicy, packet: Packet
-    ) -> dict | None:
+    ) -> PacketAnswer | None:
         """Parse the policy rules and look for a match
 
         Args:
@@ -63,13 +64,12 @@ class SimulateFirewallUC:
             packet (Packet)
 
         Returns:
-            dict | None
+            PacketAnswer | None
         """
         for rule in filter(lambda x: x.enabled, policy.rules):
-            out = {
-                "access": rule.action,
-                "rule_matched": f"id={rule.id} name={rule.name}",
-            }
+            out = PacketAnswer(
+                access=rule.action, rule_id=rule.id, policy_id=rule.policy_id
+            )
 
             if (
                 self.__protocol_mactches(rule.protocol, packet.protocol)
@@ -89,11 +89,11 @@ class SimulateFirewallUC:
             NotFoundError
         """
 
-        out = {
-            "access": DefaultAction.DENY,
-            "reason": "No rule matched, therefore deny is applied",
-            "rule_matched": None,
-        }
+        out = PacketAnswer(
+            access=DefaultAction.DENY,
+            reason="No rule matched, therefore deny is applied",
+        )
+
         charged_firewall = self.firewall_repo.get_policies_and_rules(firewall_id)
         if not charged_firewall:
             raise NotFoundError(
@@ -106,10 +106,11 @@ class SimulateFirewallUC:
                 return rule_match
 
             if policy.default_action == DefaultAction.DENY:
-                out["reason"] = (
+                out.reason = (
                     f"Default action of the policy {policy.name}"
                     + "applied since no rules matched."
                 )
+                out.policy_id = policy.id
                 return out
 
         return out
