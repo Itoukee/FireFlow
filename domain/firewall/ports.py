@@ -1,7 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
 
-from domain.firewall.entity import Firewall
 from domain.rule.entity import Rule
 
 
