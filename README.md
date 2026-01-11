@@ -1,7 +1,33 @@
 # FireFlow
 
+This project mimics a firewall manager tool. You can create, update, delete firewalls/policies/rules. 
+It respects the rule of "First match wins". 
+A feature has also be implemented to simulate a firewall's response to a packet.
 
-Description of the project
+## Example
+
+**Firewall Policy**:
+`default_action = DENY`
+
+**Firewall rules:**
+
+| source_ip | port           | protocol  | action |
+| ------------- | ------------- | ----- | ---- |
+|192.168.1.2    | 80 | TCP   |Allow|
+| 10.10.0.0     | None      | UDP   |Deny|
+| None | None   |    None        | Deny  |
+
+**Packet**
+````
+{
+   "source_ip": 0.0.0.0,
+   "port":80,
+   "protocol": "tcp"
+}
+````
+This packet will not match any rule. It partially matches some rules, but that doesn't count as an authorization. It will then fallback to the policy default action.
+
+However, if the ip was `192.168.1.2`, it would've matched the first rule and be allowed.
 
 ## Environnement requirements
 You need a .env file that is not provided. Use the .env.example to get the keys and set your values as you need
@@ -22,6 +48,9 @@ You need a .env file that is not provided. Use the .env.example to get the keys 
     - `alembic stamp head`
  - Run the server in dev mode
     - `python run.py`
+
+**A swagger is available at the root of the api**\
+Such as `http://localhost:8080/`
     
 ## Production use
 
