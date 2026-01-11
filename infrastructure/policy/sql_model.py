@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import ForeignKey, Integer, String, Enum as SqlEnum
+from sqlalchemy import ForeignKey, Index, Integer, String, Enum as SqlEnum
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from domain.enums import DefaultAction
@@ -23,5 +23,11 @@ class PolicyModel(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
-
-    rules = relationship("RuleModel", cascade="all, delete-orphan")
+    firewall = relationship("FirewallModel", back_populates="policies")
+    rules = relationship(
+        "RuleModel", cascade="all, delete-orphan", back_populates="policy"
+    )
+    __table_args__ = (
+        Index("idx_policy_firewall", "firewall_id"),
+        Index("idx_policy_name_per_firewall", "name"),
+    )

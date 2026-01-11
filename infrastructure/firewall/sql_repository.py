@@ -1,9 +1,13 @@
+from sqlalchemy.orm import joinedload
+
 from domain.exceptions import NotFoundError
 from domain.firewall.entity import Firewall
-from domain.firewall.ports import FirewallPatch
+from domain.firewall.ports import ChargedFirewall, FirewallPatch, ChargedPolicy
 from domain.firewall.repository import FirewallRepository
+from domain.rule.entity import Rule
 from infrastructure.firewall.sql_model import FirewallModel
 from infrastructure.databases.sql import get_database_session
+from infrastructure.policy.sql_model import PolicyModel
 
 
 class FirewallSQLRepository(FirewallRepository):
@@ -22,6 +26,37 @@ class FirewallSQLRepository(FirewallRepository):
             description=item.description,
             created_at=item.created_at,
             updated_at=item.updated_at,
+        )
+
+    def __to_charged_firewall(self, item: FirewallModel):
+        return ChargedFirewall(
+            id=item.id,
+            name=item.name,
+            description=item.description,
+            policies=[
+                ChargedPolicy(
+                    id=p.id,
+                    name=p.name,
+                    default_action=p.default_action,
+                    priority=p.priority,
+                    rules=[
+                        Rule(
+                            id=r.id,
+                            policy_id=r.policy_id,
+                            name=r.name,
+                            source_ip=r.source_ip,
+                            destination_ip=r.destination_ip,
+                            port=r.port,
+                            protocol=r.protocol,
+                            action=r.action,
+                            enabled=r.enabled,
+                            order=r.order,
+                        )
+                        for r in p.rules
+                    ],
+                )
+                for p in item.policies
+            ],
         )
 
     def __patch_item(self, row: FirewallModel, upd: FirewallPatch):
@@ -148,3 +183,20 @@ class FirewallSQLRepository(FirewallRepository):
         self.session.commit()
 
         return True
+
+    def get_policies_and_rules(self, firewall_id: int) -> ChargedFirewall | None:
+        """Returns a firewall with its policies and rules loaded
+
+        Args:
+            firewall_id (int)
+        Returns:
+            Firewall
+        """
+        row = (
+            self.session.query(FirewallModel)
+            .filter_by(id=firewall_id)
+            .options(joinedload(FirewallModel.policies).joinedload(PolicyModel.rules))
+        ).first()
+        if row:
+            return self.__to_charged_firewall(row)
+        return None

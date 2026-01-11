@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Boolean, ForeignKey, Integer, String, Enum as SqlEnum
+from sqlalchemy import Boolean, ForeignKey, Index, Integer, String, Enum as SqlEnum
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from domain.enums import DefaultAction, Protocol
@@ -32,3 +32,8 @@ class RuleModel(Base):
     )
 
     policy: Mapped[PolicyModel] = relationship("PolicyModel", back_populates="rules")
+
+    __table_args__ = (
+        Index("idx_rule_policy", "policy_id"),
+        Index("idx_name_per_policy", "name"),
+    )

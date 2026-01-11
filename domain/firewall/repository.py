@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from domain.firewall.entity import Firewall
-from domain.firewall.ports import FirewallPatch
+from domain.firewall.ports import ChargedFirewall, FirewallPatch
 
 
 class FirewallRepository(ABC):
@@ -35,4 +35,8 @@ class FirewallRepository(ABC):
 
     @abstractmethod
     def delete(self, firewall_id: int) -> bool:
+        pass
+
+    @abstractmethod
+    def get_policies_and_rules(self, firewall_id: int) -> ChargedFirewall | None:
         pass

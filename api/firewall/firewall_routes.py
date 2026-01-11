@@ -21,6 +21,20 @@ from infrastructure.firewall.sql_repository import FirewallSQLRepository
 firewall_repo = FirewallSQLRepository()
 
 
+@api.route("/<int:firewall_id>/all")
+class FullFirewall(Resource):
+    def get(self, firewall_id: int):
+        """Get a firewall with its entire policies and rules
+
+        Args:
+            firewall_id (int)
+        """
+        full_fire = firewall_repo.get_policies_and_rules(firewall_id)
+        if full_fire:
+            return {"success": True, "data": {"firewall": full_fire.model_dump()}}
+        return
+
+
 @api.route("/<int:firewall_id>")
 class FirewallResource(Resource):
 

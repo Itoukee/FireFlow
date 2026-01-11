@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Integer, String
+from sqlalchemy import Index, Integer, String
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from infrastructure.databases.sql import Base
@@ -19,4 +19,8 @@ class FirewallModel(Base):
         onupdate=lambda: datetime.now(timezone.utc),
     )
 
-    policies = relationship("PolicyModel", cascade="all, delete-orphan")
+    policies = relationship(
+        "PolicyModel", cascade="all, delete-orphan", back_populates="firewall"
+    )
+
+    __table_args__ = (Index("idx_firewall_name", "name"),)
