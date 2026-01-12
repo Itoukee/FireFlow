@@ -15,12 +15,12 @@ class Simulate(Resource):
     def post(self, firewall_id: int):
         """Simulate a firewall with a packet"""
         if not isinstance(firewall_id, int):
-            return api.abort(400, "The firewall id must be an integer")
+            return api.abort(400, "The firewall id must be an integer", success=False)
         try:
             packet = Packet(**api.payload)
         except ValidationError as ve:
-            return api.abort(400, ve.errors())
+            return api.abort(400, ve.errors(), success=False)
 
         out = SimulateFirewallUC(firewall_repo).execute(packet, firewall_id)
 
-        return {"success": True, "data": out}
+        return {"success": True, "data": out.model_dump()}

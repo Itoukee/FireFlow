@@ -1,6 +1,6 @@
 from sqlalchemy.orm import joinedload
 
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.firewall.entity import Firewall
 from domain.firewall.ports import ChargedFirewall, FirewallPatch, ChargedPolicy
 from domain.firewall.repository import FirewallRepository

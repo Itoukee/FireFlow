@@ -1,4 +1,4 @@
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.policy.entity import Policy
 from domain.policy.ports import PolicyPatch
 from domain.policy.repository import PolicyRepository

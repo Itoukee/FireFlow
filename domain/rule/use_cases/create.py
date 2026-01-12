@@ -1,5 +1,5 @@
 from domain.enums import DefaultAction, Protocol
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.policy.repository import PolicyRepository
 from domain.rule.entity import Rule
 from domain.rule.ports import CreateRule

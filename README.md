@@ -38,7 +38,7 @@ You need a .env file that is not provided. Use the .env.example to get the keys 
 - `chmod +x ./entrypoint.sh`
 
 ## Local use
- - Install the requirements
+ - Install the requirements (a virtual env is recommanded )
    - Either with `pip install -r requirements.txt` OR
    `./requirements-install.sh` 
  - Create the migrations

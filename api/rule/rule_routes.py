@@ -3,7 +3,7 @@ from flask_restx import Resource
 from pydantic import ValidationError
 
 from api.rule.rule_model import api, rule_create_model, rule_patch_model
-from domain.exceptions import NotFoundError, ForbiddenError
+from infrastructure.exceptions import NotFoundError, ForbiddenError
 from domain.rule.ports import CreateRule, PatchRule
 from domain.rule.use_cases import (
     PaginateRulesByPolicyUC,
@@ -35,7 +35,7 @@ class RuleResource(Resource):
             or not isinstance(policy_id, int)
             or not isinstance(rule_id, int)
         ):
-            api.abort(400, "The ids must be an integer")
+            api.abort(400, "The ids must be an integer", success=False)
         try:
             rule = GetRuleByIdUC(rule_repo, policy_repo).execute(
                 rule_id=rule_id, firewall_id=firewall_id, policy_id=policy_id
@@ -44,7 +44,7 @@ class RuleResource(Resource):
             return api.abort(404, err)
 
         if not rule:
-            return api.abort(404, f"Rule id={rule_id} not found")
+            return api.abort(404, f"Rule id={rule_id} not found", success=False)
 
         return {"success": True, "data": {"rule": rule.to_dict()}}
 
@@ -62,23 +62,23 @@ class RuleResource(Resource):
             or not isinstance(policy_id, int)
             or not isinstance(rule_id, int)
         ):
-            api.abort(400, "The ids must be an integer")
+            api.abort(400, "The ids must be an integer", success=False)
         if not api.payload or not isinstance(api.payload, dict):
-            api.abort(400, "JSON body required")
+            api.abort(400, "JSON body required", success=False)
 
         try:
             rule_patch = PatchRule(**api.payload)
         except ValidationError as ve:
-            return api.abort(400, ve.errors())
+            return api.abort(400, ve.errors(), success=False)
 
         try:
             rule = PatchRuleUC(rule_repo, policy_repo).execute(
                 rule_id, firewall_id, policy_id, rule_patch
             )
         except NotFoundError as ne:
-            return api.abort(404, ne)
+            return api.abort(404, ne, success=False)
         except ForbiddenError as fe:
-            return api.abort(403, fe)
+            return api.abort(403, fe, success=False)
 
         return {"success": True, "data": {"rule": rule.to_dict()}}
 
@@ -94,13 +94,13 @@ class RuleResource(Resource):
             or not isinstance(policy_id, int)
             or not isinstance(rule_id, int)
         ):
-            api.abort(400, "The ids must be an integer")
+            api.abort(400, "The ids must be an integer", success=False)
         try:
             DeleteRuleByIdUC(rule_repo, policy_repo).execute(
                 rule_id, firewall_id, policy_id
             )
         except NotFoundError as ne:
-            api.abort(404, ne)
+            api.abort(404, ne, success=False)
         return "", 204
 
 
@@ -114,7 +114,9 @@ class RulesResource(Resource):
     def get(self, firewall_id: int, policy_id: int):
         """Paginate the rules given a specific policy_id"""
         if not isinstance(policy_id, int) or not isinstance(firewall_id, int):
-            api.abort(400, "The firewall_id and policy_id must be an integer")
+            api.abort(
+                400, "The firewall_id and policy_id must be an integer", success=False
+            )
 
         page = int(request.args.get("page", 0))
         limit = int(request.args.get("limit", 10))
@@ -136,18 +138,20 @@ class RulesResource(Resource):
         """Create a new policy rule"""
 
         if not isinstance(policy_id, int) or not isinstance(firewall_id, int):
-            api.abort(400, "The firewall_id and policy_id must be an integer")
+            api.abort(
+                400, "The firewall_id and policy_id must be an integer", success=False
+            )
 
         try:
             create_rule = CreateRule(**api.payload, policy_id=policy_id)
         except ValidationError as ve:
-            return api.abort(400, ve.errors())
+            return api.abort(400, ve.errors(), success=False)
 
         try:
             rule = CreateRuleUC(rule_repo, policy_repo).execute(
                 policy_id, firewall_id, create_rule
             )
         except NotFoundError as ne:
-            return api.abort(404, ne)
+            return api.abort(404, ne, success=False)
 
         return {"success": True, "data": {"rule": rule.to_dict()}}, 201

@@ -7,7 +7,7 @@ from api.firewall.firewall_models import (
     firewall_create_model,
     firewall_patch_model,
 )
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.firewall.use_cases import (
     CreateFirewallUC,
     PaginateFirewallsUC,
@@ -32,7 +32,7 @@ class FullFirewall(Resource):
         full_fire = firewall_repo.get_policies_and_rules(firewall_id)
         if full_fire:
             return {"success": True, "data": {"firewall": full_fire.model_dump()}}
-        return
+        api.abort(404, "Firewall not found", success=False)
 
 
 @api.route("/<int:firewall_id>")
@@ -47,7 +47,9 @@ class FirewallResource(Resource):
         firewall = GetFirewallByIdUC(firewall_repo).execute(firewall_id)
 
         if not firewall:
-            api.abort(404, f"Firewall with id={firewall_id} has not been found")
+            api.abort(
+                404, f"Firewall with id={firewall_id} has not been found", success=False
+            )
         else:
             return {"success": True, "data": {"firewall": firewall.to_dict()}}
 
@@ -67,22 +69,25 @@ class FirewallResource(Resource):
             firewall_id (int): Params
         """
         if not isinstance(firewall_id, int):
-            api.abort(400, "The id must be an integer")
+            api.abort(400, "The id must be an integer", success=False)
         if not api.payload or not isinstance(api.payload, dict):
-            api.abort(400, "JSON body required")
+            api.abort(400, "JSON body required", success=False)
 
         try:
             firewall_update = FirewallPatch(**api.payload)
         except ValidationError as ve:
-            return api.abort(400, ve.errors())
+            return api.abort(400, ve.errors(), success=False)
 
         try:
             firewall = PatchFirewallUC(firewall_repo).execute(
                 firewall_id, firewall_update
             )
         except NotFoundError as ne:
-            return api.abort(404, ne)
-        return {"success": True, "data": {"firewall": firewall.to_dict()}}
+            return api.abort(404, ne, success=False)
+        return {
+            "success": True,
+            "data": {"firewall": firewall.to_dict()},
+        }
 
     @api.doc("Delete a firewall by id")
     def delete(self, firewall_id: int):
@@ -91,11 +96,11 @@ class FirewallResource(Resource):
             firewall_id (int): Params
         """
         if not isinstance(firewall_id, int):
-            api.abort(400, "The id must be an integer")
+            api.abort(400, "The id must be an integer", success=False)
         try:
             DeleteFirewallUC(firewall_repo).execute(firewall_id)
         except NotFoundError as ne:
-            api.abort(404, ne)
+            api.abort(404, ne, success=False)
         return "", 204
 
 
@@ -127,12 +132,12 @@ class FirewallsResource(Resource):
         Args : Body {name:str,description:Optional[str]}
         """
         if not api.payload or not isinstance(api.payload, dict):
-            api.abort(400, "JSON body required")
+            api.abort(400, "JSON body required", success=False)
 
         try:
             firewall_create = FirewallCreate(**api.payload)
         except ValidationError as ve:
-            return api.abort(400, ve.errors())
+            return api.abort(400, ve.errors(), success=False)
 
         try:
             firewall = CreateFirewallUC(firewall_repo).execute(firewall_create)

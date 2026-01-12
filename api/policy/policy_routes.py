@@ -3,7 +3,7 @@ from flask_restx import Resource
 from pydantic import ValidationError
 
 from api.policy.policy_models import api, policy_create_model, policy_patch_model
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.policy.ports import PolicyCreate, PolicyPatch
 from domain.policy.use_cases import (
     CreatePolicyUC,
@@ -30,16 +30,18 @@ class PolicyResource(Resource):
             policy_id (int): Params
         """
         if not isinstance(firewall_id, int) or not isinstance(policy_id, int):
-            api.abort(400, "The firewall_id and policy_id must be an integer")
+            api.abort(
+                400, "The firewall_id and policy_id must be an integer", success=False
+            )
         try:
             policy = GetPolicyByIdUC(policy_repo, firewall_repo).execute(
                 firewall_id, policy_id
             )
         except NotFoundError as err:
-            return api.abort(404, err)
+            return api.abort(404, err, success=False)
 
         if not policy:
-            return api.abort(404, f"Policy id={policy_id} not found")
+            return api.abort(404, f"Policy id={policy_id} not found", success=False)
 
         return {"success": True, "data": {"policy": policy.to_dict()}}
 
@@ -51,21 +53,23 @@ class PolicyResource(Resource):
             firewall_id (int): Params
         """
         if not isinstance(firewall_id, int) or not isinstance(policy_id, int):
-            api.abort(400, "The firewall_id and policy_id must be an integer")
+            api.abort(
+                400, "The firewall_id and policy_id must be an integer", success=False
+            )
         if not api.payload or not isinstance(api.payload, dict):
-            api.abort(400, "JSON body required")
+            api.abort(400, "JSON body required", success=False)
 
         try:
             policy_patch = PolicyPatch(**api.payload)
         except ValidationError as ve:
-            return api.abort(400, ve.errors())
+            return api.abort(400, ve.errors(), success=False)
 
         try:
             policy = PatchPolicyUC(policy_repo, firewall_repo).execute(
                 policy_id, firewall_id, policy_patch
             )
         except NotFoundError as ne:
-            return api.abort(404, ne)
+            return api.abort(404, ne, success=False)
         return {"success": True, "data": {"policy": policy.to_dict()}}
 
     def delete(self, firewall_id: int, policy_id: int):
@@ -74,13 +78,15 @@ class PolicyResource(Resource):
             firewall_id (int): Params
         """
         if not isinstance(firewall_id, int) or not isinstance(policy_id, int):
-            api.abort(400, "The firewall_id and policy_id must be an integer")
+            api.abort(
+                400, "The firewall_id and policy_id must be an integer", success=False
+            )
         try:
             DeletePolicyByIdUC(policy_repo, firewall_repo).execute(
                 firewall_id, policy_id
             )
         except NotFoundError as ne:
-            api.abort(404, ne)
+            api.abort(404, ne, success=False)
         return "", 204
 
 
@@ -114,12 +120,12 @@ class PoliciesResource(Resource):
         """Creates a policy given a firewall id"""
 
         if not api.payload or not isinstance(api.payload, dict):
-            api.abort(400, "JSON body required")
+            api.abort(400, "JSON body required", success=False)
 
         try:
             policy_create = PolicyCreate(**api.payload, firewall_id=firewall_id)
         except ValidationError as ve:
-            return api.abort(400, ve.errors())
+            return api.abort(400, ve.errors(), success=False)
 
         try:
             policy = CreatePolicyUC(policy_repo, firewall_repo).execute(
@@ -127,7 +133,7 @@ class PoliciesResource(Resource):
             )
 
         except NotFoundError as ne:
-            return api.abort(404, ne)
+            return api.abort(404, ne, success=False)
 
         return {
             "success": True,

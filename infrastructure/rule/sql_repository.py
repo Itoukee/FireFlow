@@ -1,4 +1,4 @@
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.rule.entity import Rule
 from domain.rule.ports import PatchRule
 from domain.rule.repository import RuleRepository

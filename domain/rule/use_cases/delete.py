@@ -1,4 +1,4 @@
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.policy.repository import PolicyRepository
 from domain.rule.repository import RuleRepository
 

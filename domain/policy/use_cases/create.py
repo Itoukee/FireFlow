@@ -1,5 +1,5 @@
 from domain.enums import DefaultAction
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.firewall.repository import FirewallRepository
 from domain.policy.entity import Policy
 from domain.policy.ports import PolicyCreate

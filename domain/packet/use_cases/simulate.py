@@ -4,7 +4,7 @@ from typing import Optional
 from domain.enums import DefaultAction, Protocol
 from domain.firewall.ports import ChargedPolicy
 from domain.firewall.repository import FirewallRepository
-from domain.exceptions import NotFoundError
+from infrastructure.exceptions import NotFoundError
 from domain.packet.entity import Packet
 from domain.packet.ports import PacketAnswer
 
