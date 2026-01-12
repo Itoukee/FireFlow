@@ -42,10 +42,10 @@ You need a .env file that is not provided. Use the .env.example to get the keys 
    - Either with `pip install -r requirements.txt` OR
    `./requirements-install.sh` 
  - Create the migrations
-    - `alembic revision -m "revision message"`
+    - `alembic revision --autogenerate -m "revision message"`
  - Run the last migration 
     - `alembic upgrade head`
- - Set the last migration as the current one : 
+ - You can set the last migration as the current one if you need to make new ones later : 
     - `alembic stamp head`
  - Run the server in dev mode
     - `python run.py`
